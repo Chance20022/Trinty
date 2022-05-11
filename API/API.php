@@ -484,4 +484,14 @@
         $json = json_encode($arr);
         echo $json;
     }
+
+    if($_POST['method'] == 'deletePublicationUser'){
+        $id = $_POST['id'];
+        $sql = "DELETE FROM uploaddata WHERE id = '$id'";
+        mysqli_query($linkBD, $sql);
+
+        $arr = ['access' => true];
+        $json = json_encode($arr);
+        echo $json;
+    }
 ?>

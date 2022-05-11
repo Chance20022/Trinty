@@ -526,13 +526,10 @@ a.Registr{
 
 /*///////////////////////////////////////////////*/
 
-.buttonLeaveAcc{
-	/**/
-}
-
 .wrapperAcc{
-	display: block;
-	justify-content: center;
+	display: flex;
+	width: 80%;
+	margin: 30px auto 0 auto
 }
 
 .SetMenu.account{
@@ -547,16 +544,170 @@ a.Registr{
 	box-shadow: 0 0px 10px rgba(0, 0, 0, 0.3);
 }
 
+.InfoAboutStatisticks{
+	text-align: center;
+}
+
 .userDataAccount{
-	
+	margin-top: 50px;
+	width: 20%;
 }
 
 .publicationUserAcc{
-
+	width: 80%;
+	display: block;
+	padding: 0px 20px;
 }
 
-.userImageAva{
+.statisticsACC{
+	margin-top: 15px;
+	display: block;
+}
 
+.statsText{
+	display: flex;
+	justify-content: space-around;
+}
+
+.statsT{
+	text-align: center;
+	vertical-align: middle;
+	width: 33%;
+	font-family: Arial;
+	font-size: 16px;
+}
+
+.statsInfo{
+	display: flex;
+	justify-content: space-around;
+	padding-top: 20px;
+}
+
+.statisticsImgMainPage{
+	height: 12px;
+	width: 12px;
+}
+
+.statisticsImgMainPageStar{
+	height: 13px;
+	width: 13px;
+	margin: auto;
+}
+
+.statisticsImgMainPageWatch{
+	height: 12px;
+	width: 19px;
+	margin: auto;
+}
+
+.statsI{
+	text-align: center;
+	vertical-align: middle;
+	width: 33%;
+	font-family: Arial;
+	font-size: 16px;
+}
+
+.firststatsT{
+	border-right: 1px solid #4c4cb3;
+}
+
+.secondstatsT{
+	border-right: 1px solid #4c4cb3;
+}
+
+.buttonLichDan{
+	margin-top: 20px;
+	height: 40px;
+	width: 100%;
+	font-size: 16px;
+	color: white;
+	background-color: #4c4cb3;
+	border: 0px solid #4c4cb3;
+	border-radius: 4px;
+}
+
+.titleTextAcc{
+	padding-bottom: 20px;
+	border-bottom: 2px solid #4c4cb3;
+}
+
+.CellAcc{
+	padding: 15px;
+	width: 100%;
+	margin-top: 35px;
+	border-radius: 4px;
+	box-shadow: 0 0 10px rgba(0,0,0,0.3);
+	cursor: pointer;
+	display: flex;
+}
+
+.mainImageAcc{
+	width: 37%;
+	height: 200px;
+	display: flex;
+	justify-content: center;
+	background-color: #4c4cb3;
+}
+
+.mainImageAcc img{
+	max-width: 100%;
+	max-height: 100%;
+}
+
+.InformationAcc{
+	display: block;
+	width: 62%;
+	padding-left: 15px
+}
+
+.UserInfoAcc{
+	display: flex;
+	justify-content: flex-end;
+	margin-top: 15px;
+}
+
+.titleAccCell{
+	display: flex;
+	justify-content: space-between;
+}
+
+.optionPubAcc{
+	display: flex;
+}
+
+.optionPubAcc a{
+	margin: auto;
+	margin-left: 8px;
+	color:#4c4cb3;
+}
+
+#toTop {
+	width:100px;
+	background-color: #4c4cb3;
+	border-radius: 4px;
+	text-align:center;
+	padding:10px;
+	position:fixed;
+	bottom:50px; /* отступ кнопки от нижнего края страницы*/
+	right:50px;
+	cursor:pointer;
+	display:none;
+	color:white;
+	font-size:14px;
+	opacity: 0.9;
+}
+
+.StatisticsAcc{
+	margin-top: 2px;
+}
+
+.mainTitleTextAcc{
+	color:black;
+}
+
+.buttonLichDan{
+	cursor: pointer;
 }
 
 /*/////////////////////////////////////////////////*/
@@ -784,7 +935,7 @@ a.Registr{
 	color: grey;
 	cursor: default;
 	position: absolute;
-	top: 890px;
+	top: 898px;
 	left: 510px;
 }
 

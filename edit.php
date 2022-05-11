@@ -34,7 +34,6 @@
             <div class='UserNameUpload'>
                 <span class="UserNameTextUoload"> <?php echo $_SESSION['login']; ?></span>
             </div>
-            <form enctype="multipart/form-data" action="uploadPage.php" method="POST" id='mainForm'>
                 <div class='nameOfModel'>
                     <input type="text" name="mainText" id="mainText">
                     <span class="HintHeader">(Главный заголовок)</span>
@@ -85,7 +84,6 @@
                     <span class="ShortDescriptionTitle">Описание (не обязательно)</span><br>
                     <textarea id="textArea" name="descriptionText" maxlength="1500" cols="30" rows="10" class="tired"></textarea>
                 </div>
-            </form>
             <button class="UploadButton">Загрузить</button>
         </div>
     </content>

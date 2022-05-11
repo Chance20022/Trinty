@@ -140,11 +140,11 @@
                                     <span><?php echo $row['loginUser']; ?></span>
                                 </a>
                                 <div class="Statistics">
-                                    <img src="images/logo/" alt="">
+                                    <img class="statisticsImgMainPage" src="images/logo/coments.png" alt="">
                                     <span><?php echo $row['Comments']; ?></span>
-                                    <img src="images/logo/" alt="">
+                                    <img class="statisticsImgMainPageStar" src="images/logo/starActive.png" alt="">
                                     <span><?php echo $row['Reviews']; ?></span>
-                                    <img src="images/logo/" alt="">
+                                    <img class="statisticsImgMainPageWatch" src="images/logo/watch.png" alt="">
                                     <span><?php echo $row['Watched']; ?></span>
                                 </div>
                             </div>
