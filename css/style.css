@@ -19,7 +19,7 @@ header{
 
 .Logo{
 	margin: auto 0 auto 0;
-	width: 210px;
+	width: 215px;
 }
 
 .LogoText{
@@ -274,6 +274,26 @@ a.Registr{
 	font-size: 42px;
 }
 
+.NumberPages{
+	margin: 30px 0;
+	display: flex;
+	justify-content: center;
+}
+
+.cellNumberPages{
+	width: 20px;
+	height: 20px;
+	padding: 5px;
+	border: 1px solid #4c4cb3;
+	border-radius: 4px;
+	margin: 0 5px;
+	display: flex;
+	justify-content: center;
+}
+
+.cellNumberPages a{
+	font-size: 18px;
+}
 
 /*/////////////////////////////////////////////////*/
 
@@ -286,6 +306,32 @@ a.Registr{
 	background-color: #4c4cb3;
 	border-radius: 6px;
     box-shadow: 0 2px 4px 0 rgb(0 0 0 / 10%);
+}
+
+.InfoTextEmail{
+	color: white;
+	font-size: 16px;
+	text-align: center;
+}
+
+.buttonCode{
+	width: 100%;
+    height: 48px;
+    font-size: 18px;
+    color: white;
+    background-color: #7474fb;
+    border: 0px black;
+}
+
+.placeCode input{
+	margin: 20px 0;
+	width: 100%;
+    height: 40px;
+    background: #FFF;
+    border: 1px solid #DBDBDB;
+    padding: 0 14px;
+    box-sizing: border-box;
+    font-size: 14px;
 }
 
 .WordAccess{
@@ -415,6 +461,16 @@ a.Registr{
     font-size: 14px;
 }
 
+.forgetPassword{
+	padding: 5px;
+	display: flex;
+	justify-content: end;
+}
+
+.forgotA{
+	color: white;
+}
+
 .PasswordnData{
 	margin-top: 20px;
 }
@@ -430,7 +486,7 @@ a.Registr{
 }
 
 .ButtonPushData{
-	margin-top: 28px;
+	margin-top: 20px;
 	height: 100%;
 }
 
@@ -661,7 +717,7 @@ a.Registr{
 }
 
 .textRash{
-	font-size: 28px;
+	font-size: 34px;
 	font-weight: 500;
 }
 
@@ -728,7 +784,7 @@ a.Registr{
 	color: grey;
 	cursor: default;
 	position: absolute;
-	top: 943px;
+	top: 890px;
 	left: 510px;
 }
 
@@ -743,7 +799,7 @@ a.Registr{
 }
 
 .UserNameTextPage{
-	font-size: 28px;
+	font-size: 34px;
 	color: #4c4cb3;
 }
 
@@ -771,7 +827,7 @@ a.Registr{
 }
 
 .DescriptionTitle{
-	font-size: 28px;
+	font-size: 34px;
 }
 
 .text{
@@ -782,4 +838,120 @@ a.Registr{
 
 .download{
 	color: white;
+}
+
+.otzivi{
+	padding: 20px 30px;
+	border-radius: 4px;
+	box-shadow: 0 0 10px rgba(0,0,0,0.2);
+	margin-top: 50px;
+	display: block;
+	width: 990px;
+}
+
+.titleOtz{
+	font-size: 34px;
+	color:#4c4cb3;
+}
+
+.titleOtzDiscr{
+	font-size: 16px;
+}
+
+.descripTitleOtz{
+	font-size: 20px;
+}
+
+.reviewsPlace{
+	margin: 20px 0;
+	width: 98%;
+	padding: 10px;
+	resize: none;
+	font-size: 16px;
+	border: 1px solid #4c4cb3;
+	outline: none;
+}
+
+.titleO{
+	display: flex;
+	justify-content: space-between;
+}
+
+.pushReviws{
+    width: 100%;
+    height: 48px;
+    font-size: 18px;
+	font-family: Arial;
+    color: white;
+    background-color: #4c4cb3;
+    border: 0px black;
+	border-radius: 4px;
+}
+
+.stars{
+	width: 25px;
+	height: 25px;
+	cursor: pointer;
+}
+
+.starText{
+	margin: 0 3px;
+	font-size: 18px;
+}
+
+.lineStars{
+	display: flex;
+}
+
+.emptyRev{
+	margin: 30px 0;
+	padding: 20px 30px;
+	border-radius: 4px;
+	text-align: center;
+	box-shadow: 0 0 10px rgba(0,0,0,0.2);
+	width: 990px;
+}
+
+.coment{
+	margin: 30px 0;
+	padding: 20px 30px;
+	border-radius: 4px;
+	box-shadow: 0 0 10px rgba(0,0,0,0.2);
+	width: 990px;
+}
+
+.titleUserComent{
+	display: flex;
+	justify-content: space-between;
+}
+
+.lineStarsCom{
+	display: flex;
+}
+
+.starsCom{
+	width: 25px;
+	height: 25px;
+	cursor: pointer;
+}
+
+.comentUserYes{
+	padding: 20px;
+	word-wrap: break-word;
+}
+
+.choiceUserToRevie{
+	display: flex;
+	justify-content: space-around;
+}
+
+.EditReviws{
+	width: 48%;
+    height: 48px;
+    font-size: 18px;
+	font-family: Arial;
+    color: white;
+    background-color: #4c4cb3;
+    border: 0px black;
+	border-radius: 4px;
 }

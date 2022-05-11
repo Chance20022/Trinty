@@ -17,13 +17,13 @@
         <div class="UpHeaderAU">
             <div class="LogoAU">
                 <a class="LogoTextAU" href="index.php">Trinty 
-                    <a class="LogoText SmallAU" href="index.php">ACCOUNT</a>
+                    <a class="LogoText SmallAU" href="index.php">Аккаунт</a>
                 </a>
             </div>
             <div class="UserActionsAU">
                 <div class="ImageSIAU"><img src="images/logo/Sign in.png" alt="Картинка авторизации"></div>
                 <div class="SigninAU">
-                    <span class="authoAU">+Sign in</span>
+                    <span class="authoAU">Вход</span>
                 </div>
             </div>
         </div>
@@ -32,17 +32,16 @@
         <div class="WindowAutho">
             <div class="MainText">
                 <?php if($_GET['autho'] == "Authorizaton") : ?>
-                    <span class="MainTextSetting">Authorization</span>
+                    <span class="MainTextSetting">Авторизация</span>
                 <?php else : ?>
-                    <span class="MainTextSetting">Registration</span>
+                    <span class="MainTextSetting">Регистрация</span>
                 <?php endif ?>
             </div>
             <div class="getDataUser">
                 <?php if($_GET['autho'] == "Authorizaton") : ?>
-                    <form action="authorization.php" method="post">
                         <div class="LoginData">
                             <div class="LoginUser">
-                                <span>Login/Email</span>
+                                <span>Логин/Почта</span>
                             </div>
                             <div class="LoginText">
                                 <input id="LoginAutho" type="text" name="Login">
@@ -50,21 +49,22 @@
                         </div>
                         <div class="PasswordnData">
                             <div class="LoginUser">
-                                <span>Password</span>
+                                <span>Пароль</span>
                             </div>
                             <div class="PasswordText">
                                 <input id="PasswordAutho" type="password" name="Password">
                             </div>
+                            <div class="forgetPassword">
+                                <a href="#" class="forgotA">Забыли пароль?</a>
+                            </div>
                         </div>
                         <div class="ButtonPushData">
-                            <input onclick="ajaxAU()" type="button" value="Enter">
+                            <input onclick="ajaxAU()" type="button" value="Войти">
                         </div>
-                    </form>
                 <?php else : ?>
-                    <form action="authorization.php" method="post">
                         <div class="EmailData">
                             <div class="EmailUser">
-                                <span>Email</span>
+                                <span>Почта</span>
                             </div>
                             <div class="EmailText">
                                 <input id="EmailT" type="text" name="Email">
@@ -72,7 +72,7 @@
                         </div>
                         <div class="LoginDataReg">
                             <div class="LoginUser">
-                                <span>Login</span>
+                                <span>Логин</span>
                             </div>
                             <div class="LoginText">
                                 <input id="LoginT" type="text" name="Login">
@@ -80,29 +80,58 @@
                         </div>
                         <div class="PasswordnData">
                             <div class="LoginUser">
-                                <span>Password</span>
+                                <span>Пароль</span>
                             </div>
                             <div class="PasswordText">
                                 <input id="PasswordT" type="password" name="Password">
                             </div>
                         </div>
                         <div class="ButtonPushData">
-                            <input onclick="ajaxREG()" type="button" value="Enter">
+                            <input onclick="ajaxREG()" type="button" value="Далее">
                         </div>
-                    </form>
                 <?php endif ?>
             </div>
         </div>
-
-        <?php if($_GET['autho'] == "Authorizaton") : ?>
-
-        <?php else : ?>
-
-        <?php endif ?>
+        <div class="accessEmail">
+            <div class="InfoTextEmail">
+                <?php if($_GET['autho'] == 'Authorizaton') : ?>
+                Вам на почту выслано письмо с кодом для предотвращения взлома. Для продолжения дальнейшей авторизации введите код.
+                <?php else :?>
+                Вам на почту выслано письмо с кодом для подтверждения вашей почты. Для продолжения дальнейшей регистрации введите код.
+                <?php endif ?>
+            </div>
+            <div class="placeCode">
+                <input type="text" id="codeUser">
+            </div>
+            <button onclick="checkCode()" class="buttonCode">Подтвердить</button>
+        </div>
     </content>
 </body>
 
 <script>
+    $('.accessEmail').hide();
+    function checkCode(){
+        var code = document.querySelector("#codeUser").value;
+        if('<?php echo $_GET['autho']; ?>' == 'Authorizaton') var email = document.querySelector("#LoginAutho").value;
+        else var email = document.querySelector("#EmailT").value;
+
+        if(code != ""){
+            $.ajax({
+                url: "/api/API.php",
+                method: 'post',
+                dataType: 'json',
+                data: {method: 'regCode', code: code, email: email},
+                success: function(data){
+                    if(data['access'] == true){
+                        $(location).attr('href', 'index.php');
+                    }
+                    else alert("Не верный код");
+                }
+            });
+        }
+        else alert("Вы ничего не ввели");
+    }
+
     function ajaxAU(){
         var login = document.querySelector('#LoginAutho').value;
         var password = document.querySelector('#PasswordAutho').value;
@@ -128,7 +157,7 @@
                 data: {method: 'authorization', login: login, password: password},     /* Параметры передаваемые в запросе. */
                 success: function(data){   /* функция которая будет выполнена после успешного запроса.  */
                     if(data['autho'] == true){
-                        $(location).attr('href', 'index.php');
+                        $('.accessEmail').show();
                     }
                     else{
                         alert(data['result']);
@@ -172,7 +201,7 @@
                 data: {method: 'registration', login: login, password: password, email: email},     /* Параметры передаваемые в запросе. */
                 success: function(data){   /* функция которая будет выполнена после успешного запроса.  */
                     if(data['reg'] == true){
-                        $(location).attr('href', 'authorization.php?autho=Authorizaton');
+                        $('.accessEmail').show();
                     }
                     else{
                         alert(data['result']);

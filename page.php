@@ -11,10 +11,31 @@
 
     if(isset($_GET['id'])) $id = $_GET['id'];
     else $id = 0;
+    
+    // Отправка данных о помещении
+    $sql = "SELECT Watched FROM uploaddata WHERE id = $id";
+    $result = mysqli_query($linkBD,$sql);
+    $watch = mysqli_fetch_array($result);
+    $watch = (int)$watch['Watched'];
+    $watch++;
+    $sql = "UPDATE uploaddata SET Watched = $watch WHERE id = $id";
+    mysqli_query($linkBD,$sql);
 
+    // Остальное
     $sql = "SELECT * FROM uploaddata WHERE id = $id";
     $result = mysqli_query($linkBD, $sql);
     $row = mysqli_fetch_array($result);
+
+    // Комментарии от пользователей
+    $sqlCom = "SELECT * FROM commentsuser WHERE idPage = '$id' ORDER BY id DESC";
+    $resultCom = mysqli_query($linkBD, $sqlCom);
+    $comRow = mysqli_fetch_all($resultCom, MYSQLI_ASSOC);
+
+    // Для окошка комметария
+    $l = $_SESSION['login'];
+    $sql = "SELECT * FROM commentsuser WHERE loginUser = '$l' AND idPage = '$id'";
+    $result = mysqli_query($linkBD, $sql);
+    $rowCheck = mysqli_fetch_array($result);
 
     //$rows[$i]['pathImage'];
     //$rows[$i]['ExtensionFiles'];
@@ -37,7 +58,7 @@
         <div class="UpHeaderAU">
             <div class="LogoAU">
                 <a class="LogoTextAU" href="index.php">Trinty 
-                    <a class="LogoText SmallAU" href="index.php">3D MODELS</a>
+                    <a class="LogoText SmallAU" href="index.php">3D МОДЕЛИ</a>
                 </a>
             </div>
             <div class="SearchRequest">
@@ -47,23 +68,23 @@
                     <?php else :?>
                         <input class="SearchPlace" type="text" name='search'>
                     <?php endif ?>
-                    <input class="SearchButton" type="submit" value="Search">
+                    <input class="SearchButton" type="submit" value="Поиск">
                 </form>
             </div>
             <div class="UserActions">
                 <?php if(!isset($_SESSION['login'])) :?>
-                    <div><a href="authorization.php?autho=Authorizaton">+Upload</a></div>
+                    <div><a href="authorization.php?autho=Authorizaton">+Загрузить</a></div>
                 <?php else : ?>
-                    <div><a href="uploadPage.php">+Upload</a></div>
+                    <div><a href="uploadPage.php">+Загрузить</a></div>
                 <?php endif ?>
                 <?php if(!isset($_SESSION['login'])) :?>
                     <div class="ImageSI"><img src="images/logo/Sign in.png" alt="Картинка авторизации"></div>
                     <div class="Signin">
-                        <span class="autho">+Sign in</span>    
+                        <span class="autho">+Вход</span>    
                         <div class="Authorization">
                             <div class="choiceUserAutho">
-                                <a class="Autho" href="authorization.php?autho=Authorizaton">Sign in</a>
-                                <a class="Registr" href="authorization.php?autho=Registration">Registration</a>
+                                <a class="Autho" href="authorization.php?autho=Authorizaton">Вход</a>
+                                <a class="Registr" href="authorization.php?autho=Registration">Регистрация</a>
                             </div>
                         </div>
                     </div>
@@ -74,10 +95,10 @@
                         <div class="SetMenu">
                             <div class="choiceUserMenu">
                                 <div class="buttonAccount">
-                                    <a href="account.php">Account</a>
+                                    <a href="account.php">Аккаунт</a>
                                 </div>
                                 <div class="buttonLeaveAccount">
-                                    <span class="leaveAccount">Sign out</span>
+                                    <span class="leaveAccount">Выход</span>
                                 </div>
                             </div>
                         </div>
@@ -102,7 +123,7 @@
                     </div>
                     <div class="uploadDopImages">
                         <div class="buttonUploadImages">
-                            <div class="dopImagesUploadText"><a class="download" href='uploads/<?php echo $row['pathFile']; ?>'>Download</a></div>
+                            <div class="dopImagesUploadText"><a class="download" href='uploads/<?php echo $row['pathFile']; ?>'>Загрузить</a></div>
                         </div>
                         <div class="dopPhoto">
                             <div class='lineDopPhoto'>
@@ -125,14 +146,166 @@
                     </div>
                 </div>
                 <div class="placeRash">
-                    <span class="textRash">Model Extension: <?php echo $row['ExtensionFiles']; ?></span>
+                    <span class="textRash">Расширение: <?php echo $row['ExtensionFiles']; ?></span>
                 </div>
                 <div class="descriptonPage">
-                    <span class="DescriptionTitle">Short description</span>
+                    <span class="DescriptionTitle">Описание</span>
                 </div>
                 <div class="text">
                     <?php echo $row['DescriptionText'];?>
                 </div>
+                <?php if($rowCheck['loginUser'] == NULL) :?>
+                <div class="otzivi">
+                    <div class="titleO">
+                        <div>
+                            <span class="titleOtz">Отзывы <span class="titleOtzDiscr">Всего отзывов: <?php echo count($comRow); ?> (c/o: <?php echo $row['Reviews'];?>)</span></span>
+                            <div class="descripTitleOtz">Вы можете оставить свой комментарий:</div>
+                        </div>
+                        <div class="lineStars">
+                            <img class="stars" id="star1" src="images/logo/starNoActive.png" alt="Первая звезда оценки">
+                            <img class="stars" id="star2" src="images/logo/starNoActive.png" alt="Вторая звезда оценки">
+                            <img class="stars" id="star3" src="images/logo/starNoActive.png" alt="Третья звезда оценки">
+                            <img class="stars" id="star4" src="images/logo/starNoActive.png" alt="Четвёртая звезда оценки">
+                            <img class="stars" id="star5" src="images/logo/starNoActive.png" alt="Пятая звезда оценки">
+                        </div>
+                    </div>
+                    <textarea class="reviewsPlace" maxlength="4000" rows="10" placeholder="Помните о человеческом отношении друг к другу!"></textarea>
+                    <button onclick="pushReview()" class="pushReviws">Оставить отзыв</button>
+                </div>
+                <?php else : ?>
+                    <div class="otzivi">
+                    <div class="titleO">
+                        <div>
+                            <span class="titleOtz">Отзывы <span class="titleOtzDiscr">Всего отзывов: <?php echo count($comRow); ?> (c/o: <?php echo $row['Reviews'];?>)</span></span>
+                            <div class="descripTitleOtz">Вы можете отредактировать свой комментарий:</div>
+                        </div>
+                        <?php switch($rowCheck['Reviews']) :
+                        case"1": ?>
+                            <div class="lineStars">
+                                <img class="stars" id="star1" src="images/logo/starActive.png" alt="Первая звезда оценки">
+                                <img class="stars" id="star2" src="images/logo/starNoActive.png" alt="Вторая звезда оценки">
+                                <img class="stars" id="star3" src="images/logo/starNoActive.png" alt="Третья звезда оценки">
+                                <img class="stars" id="star4" src="images/logo/starNoActive.png" alt="Четвёртая звезда оценки">
+                                <img class="stars" id="star5" src="images/logo/starNoActive.png" alt="Пятая звезда оценки">
+                            </div>
+                            <?php break; ?>
+                            <?php case"2": ?>
+                            <div class="lineStars">
+                                <img class="stars" id="star1" src="images/logo/starActive.png" alt="Первая звезда оценки">
+                                <img class="stars" id="star2" src="images/logo/starActive.png" alt="Вторая звезда оценки">
+                                <img class="stars" id="star3" src="images/logo/starNoActive.png" alt="Третья звезда оценки">
+                                <img class="stars" id="star4" src="images/logo/starNoActive.png" alt="Четвёртая звезда оценки">
+                                <img class="stars" id="star5" src="images/logo/starNoActive.png" alt="Пятая звезда оценки">
+                            </div>
+                            <?php break; ?>
+                            <?php case"3": ?>
+                            <div class="lineStars">
+                                <img class="stars" id="star1" src="images/logo/starActive.png" alt="Первая звезда оценки">
+                                <img class="stars" id="star2" src="images/logo/starActive.png" alt="Вторая звезда оценки">
+                                <img class="stars" id="star3" src="images/logo/starActive.png" alt="Третья звезда оценки">
+                                <img class="stars" id="star4" src="images/logo/starNoActive.png" alt="Четвёртая звезда оценки">
+                                <img class="stars" id="star5" src="images/logo/starNoActive.png" alt="Пятая звезда оценки">
+                            </div>
+                            <?php break; ?>
+                            <?php case"4": ?>
+                            <div class="lineStars">
+                                <img class="stars" id="star1" src="images/logo/starActive.png" alt="Первая звезда оценки">
+                                <img class="stars" id="star2" src="images/logo/starActive.png" alt="Вторая звезда оценки">
+                                <img class="stars" id="star3" src="images/logo/starActive.png" alt="Третья звезда оценки">
+                                <img class="stars" id="star4" src="images/logo/starActive.png" alt="Четвёртая звезда оценки">
+                                <img class="stars" id="star5" src="images/logo/starNoActive.png" alt="Пятая звезда оценки">
+                            </div>
+                            <?php break; ?>
+                            <?php case"5": ?>
+                            <div class="lineStars">
+                                <img class="stars" id="star1" src="images/logo/starActive.png" alt="Первая звезда оценки">
+                                <img class="stars" id="star2" src="images/logo/starActive.png" alt="Вторая звезда оценки">
+                                <img class="stars" id="star3" src="images/logo/starActive.png" alt="Третья звезда оценки">
+                                <img class="stars" id="star4" src="images/logo/starActive.png" alt="Четвёртая звезда оценки">
+                                <img class="stars" id="star5" src="images/logo/starActive.png" alt="Пятая звезда оценки">
+                            </div>
+                            <?php break; ?>
+                        <?php endswitch; ?>
+                    </div>
+                    <textarea class="reviewsPlace" maxlength="4000" rows="10"><?php echo $rowCheck['comment'];?></textarea>
+                    <div class="choiceUserToRevie">
+                        <button onclick="deleteReview()" class="EditReviws">Удалить отзыв</button>
+                        <button onclick="editReview()" class="EditReviws">Редактировать отзыв</button>
+                    </div>
+                </div>
+                <?php endif ?>
+                <?php if(count($comRow) == 0) :?>
+                    <div class="emptyRev">
+                        Комментарии отсутсвуют
+                    </div>
+                <?php else :?>
+                    <?php if($row['Comments'] != '0') :?>
+                        <?php foreach($comRow as $crow) : ?>
+                            <div class="coment">
+                                <div class="titleUserComent">
+                                    <div>
+                                    <span></span><?php echo $crow['loginUser'];?></span>
+                                    <span><?php echo $crow['DateP'];?></span>
+                                    </div>
+                                    <?php switch($crow['Reviews']) :
+                                    case"1": ?>
+                                    <div class="lineStarsCom">
+                                        <img class="starsCom" id="star1" src="images/logo/starActive.png" alt="Первая звезда оценки">
+                                        <img class="starsCom" id="star2" src="images/logo/starNoActive.png" alt="Вторая звезда оценки">
+                                        <img class="starsCom" id="star3" src="images/logo/starNoActive.png" alt="Третья звезда оценки">
+                                        <img class="starsCom" id="star4" src="images/logo/starNoActive.png" alt="Четвёртая звезда оценки">
+                                        <img class="starsCom" id="star5" src="images/logo/starNoActive.png" alt="Пятая звезда оценки">
+                                    </div>
+                                    <?php break; ?>
+                                    <?php case"2": ?>
+                                    <div class="lineStarsCom">
+                                        <img class="starsCom" id="star1" src="images/logo/starActive.png" alt="Первая звезда оценки">
+                                        <img class="starsCom" id="star2" src="images/logo/starActive.png" alt="Вторая звезда оценки">
+                                        <img class="starsCom" id="star3" src="images/logo/starNoActive.png" alt="Третья звезда оценки">
+                                        <img class="starsCom" id="star4" src="images/logo/starNoActive.png" alt="Четвёртая звезда оценки">
+                                        <img class="starsCom" id="star5" src="images/logo/starNoActive.png" alt="Пятая звезда оценки">
+                                    </div>
+                                    <?php break; ?>
+                                    <?php case"3": ?>
+                                    <div class="lineStarsCom">
+                                        <img class="starsCom" id="star1" src="images/logo/starActive.png" alt="Первая звезда оценки">
+                                        <img class="starsCom" id="star2" src="images/logo/starActive.png" alt="Вторая звезда оценки">
+                                        <img class="starsCom" id="star3" src="images/logo/starActive.png" alt="Третья звезда оценки">
+                                        <img class="starsCom" id="star4" src="images/logo/starNoActive.png" alt="Четвёртая звезда оценки">
+                                        <img class="starsCom" id="star5" src="images/logo/starNoActive.png" alt="Пятая звезда оценки">
+                                    </div>
+                                    <?php break; ?>
+                                    <?php case"4": ?>
+                                    <div class="lineStarsCom">
+                                        <img class="starsCom" id="star1" src="images/logo/starActive.png" alt="Первая звезда оценки">
+                                        <img class="starsCom" id="star2" src="images/logo/starActive.png" alt="Вторая звезда оценки">
+                                        <img class="starsCom" id="star3" src="images/logo/starActive.png" alt="Третья звезда оценки">
+                                        <img class="starsCom" id="star4" src="images/logo/starActive.png" alt="Четвёртая звезда оценки">
+                                        <img class="starsCom" id="star5" src="images/logo/starNoActive.png" alt="Пятая звезда оценки">
+                                    </div>
+                                    <?php break; ?>
+                                    <?php case"5": ?>
+                                    <div class="lineStarsCom">
+                                        <img class="starsCom" id="star1" src="images/logo/starActive.png" alt="Первая звезда оценки">
+                                        <img class="starsCom" id="star2" src="images/logo/starActive.png" alt="Вторая звезда оценки">
+                                        <img class="starsCom" id="star3" src="images/logo/starActive.png" alt="Третья звезда оценки">
+                                        <img class="starsCom" id="star4" src="images/logo/starActive.png" alt="Четвёртая звезда оценки">
+                                        <img class="starsCom" id="star5" src="images/logo/starActive.png" alt="Пятая звезда оценки">
+                                    </div>
+                                    <?php break; ?>
+                                    <?php endswitch; ?>
+                                </div>
+                                <div class="comentUserYes">
+                                    <?php echo $crow['comment'];?>
+                                </div>
+                            </div>
+                        <?php endforeach ?>
+                    <?php else :?>
+                        <div class="emptyRev">
+                            Комментарии отсутсвуют
+                        </div>
+                    <?php endif ?>
+                <?php endif ?>
         </div>
     </content>
     <script>
@@ -249,6 +422,156 @@
         for(var i = images.length-1; i > -1; i--){
             $(tagCount[counterImg]).append('<img src="uploads/'+images[i]+'">');
             counterImg++;
+        }
+    </script>
+    <script>
+        var passive = 'images/logo/starNoActive.png';
+        var active = 'images/logo/starActive.png';
+        <?php if($rowCheck['Reviews'] == NULL) :?>
+            var counterStars = 0;
+        <?php else :?>
+            var counterStars = <?php echo $rowCheck['Reviews'];?>;
+        <?php endif ?>
+        // Код для ценки
+        $('#star1').mouseenter(function(){
+            $('#star1').attr('src', active);
+            $('#star2').attr('src', passive);
+            $('#star3').attr('src', passive);
+            $('#star4').attr('src', passive);
+            $('#star5').attr('src', passive);
+        });
+        $('#star1').click(function(){
+            $('#star1').attr('src', active);
+            $('#star2').attr('src', passive);
+            $('#star3').attr('src', passive);
+            $('#star4').attr('src', passive);
+            $('#star5').attr('src', passive);
+            counterStars = 1;
+        });
+
+        // 2
+        $('#star2').mouseenter(function(){
+            $('#star1').attr('src', active);
+            $('#star2').attr('src', active);
+            $('#star3').attr('src', passive);
+            $('#star4').attr('src', passive);
+            $('#star5').attr('src', passive);
+        });
+        $('#star2').click(function(){
+            $('#star1').attr('src', active);
+            $('#star2').attr('src', active);
+            $('#star3').attr('src', passive);
+            $('#star4').attr('src', passive);
+            $('#star5').attr('src', passive);
+            counterStars = 2;
+        });
+        // 3
+        $('#star3').mouseenter(function(){
+            $('#star1').attr('src', active);
+            $('#star2').attr('src', active);
+            $('#star3').attr('src', active);
+            $('#star4').attr('src', passive);
+            $('#star5').attr('src', passive);
+        });
+        $('#star3').click(function(){
+            $('#star1').attr('src', active);
+            $('#star2').attr('src', active);
+            $('#star3').attr('src', active);
+            $('#star4').attr('src', passive);
+            $('#star5').attr('src', passive);
+            counterStars = 3;
+        });
+
+        //4
+        $('#star4').mouseenter(function(){
+            $('#star1').attr('src', active);
+            $('#star2').attr('src', active);
+            $('#star3').attr('src', active);
+            $('#star4').attr('src', active);
+            $('#star5').attr('src', passive);
+        });
+        $('#star4').click(function(){
+            $('#star1').attr('src', active);
+            $('#star2').attr('src', active);
+            $('#star3').attr('src', active);
+            $('#star4').attr('src', active);
+            $('#star5').attr('src', passive);
+            counterStars = 4;
+        });
+
+        //5
+        $('#star5').mouseenter(function(){
+            $('#star1').attr('src', active);
+            $('#star2').attr('src', active);
+            $('#star3').attr('src', active);
+            $('#star4').attr('src', active);
+            $('#star5').attr('src', active);
+        });
+        $('#star5').click(function(){
+            $('#star1').attr('src', active);
+            $('#star2').attr('src', active);
+            $('#star3').attr('src', active);
+            $('#star4').attr('src', active);
+            $('#star5').attr('src', active);
+            counterStars = 5;
+        });
+    </script>
+    <script>
+        function pushReview(){
+            if(counterStars >= 1 || counterStars <=5){
+                var rev = $('.reviewsPlace').val();
+                if(rev != ""){
+                    $.ajax({
+                        url: '/api/API.php',
+                        method: 'post',
+                        dataType: 'json',
+                        data: {method: 'review', Reviews: counterStars, Comments: rev, id: <?php echo $_GET['id']; ?>, loginUser: "<?php echo $_SESSION['login'];?>"},
+                        success: function(data){
+                            $(location).attr('href', 'page.php?id=<?php echo $_GET['id'];?>');
+                        }
+                    });
+                }
+                else alert("Вам необходимо что-то написать для отправки комментария");
+            }
+            else alert("Оцените работу, чтобы оставить комментарий");
+        }
+
+        function deleteReview(){
+            if(counterStars >= 1 || counterStars <=5){
+                var rev = $('.reviewsPlace').val();
+                if(rev != ""){
+                    $.ajax({
+                        url: '/api/API.php',
+                        method: 'post',
+                        dataType: 'json',
+                        data: {method: 'deleteCom', Reviews: counterStars, RevOld: "<?php echo $row['Reviews']; ?>" , Comments: rev, id: <?php echo $_GET['id']; ?>, loginUser: "<?php echo $_SESSION['login'];?>"},
+                        success: function(data){
+                            $(location).attr('href', 'page.php?id=<?php echo $_GET['id'];?>');
+                        }
+                    });
+                }
+                else alert("Вам необходимо что-то написать для отправки комментария");
+            }
+            else alert("Оцените работу, чтобы оставить комментарий");
+        }
+
+        function editReview(){
+            if(counterStars >= 1 || counterStars <=5){
+                var rev = $('.reviewsPlace').val();
+                if(rev != ""){
+                    $.ajax({
+                        url: '/api/API.php',
+                        method: 'post',
+                        dataType: 'json',
+                        data: {method: 'editCom', Reviews: counterStars, RevOld: "<?php echo $row['Reviews']; ?>", Comments: rev, id: <?php echo $_GET['id']; ?>, loginUser: "<?php echo $_SESSION['login'];?>"},
+                        success: function(data){
+                            $(location).attr('href', 'page.php?id=<?php echo $_GET['id'];?>');
+                        }
+                    });
+                }
+                else alert("Вам необходимо что-то написать для отправки комментария");
+            }
+            else alert("Оцените работу, чтобы оставить комментарий");
         }
     </script>
 </body>

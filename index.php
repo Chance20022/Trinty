@@ -27,14 +27,14 @@
     else $pages = (int)$rowsMax[0]['max(id)'] / 28;
     if($pages == 0) $pages = 1;
 
-    //получение последние 12 побликаций
+    //получение последние 28 побликаций
     if(isset($_GET['search'])) {
         $sql = "SELECT * FROM uploaddata WHERE `id` < $maxID AND `MainText` LIKE '%$searchRequest%' ORDER BY id DESC LIMIT 28";
         $result = mysqli_query($linkBD, $sql);
         $rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
     }
     else {
-        $sql = "SELECT * FROM uploaddata WHERE id < $maxID ORDER BY id DESC LIMIT 30";
+        $sql = "SELECT * FROM uploaddata WHERE id < $maxID ORDER BY id DESC LIMIT 28";
         $result = mysqli_query($linkBD, $sql);
         $rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
     }
@@ -62,7 +62,7 @@
         <div class="UpHeader">
             <div class="Logo">
                 <a class="LogoText" href="index.php">Trinty 
-                    <a class="LogoText Small" href="index.php">3D MODELS</a>
+                    <a class="LogoText Small" href="index.php">3D МОДЕЛИ</a>
                 </a>
             </div>
             <div class="SearchRequest">
@@ -72,23 +72,23 @@
                     <?php else :?>
                         <input class="SearchPlace" type="text" name='search'>
                     <?php endif ?>
-                    <input class="SearchButton" type="submit" value="Search">
+                    <input class="SearchButton" type="submit" value="Поиск">
                 </form>
             </div>
             <div class="UserActions">
                 <?php if(!isset($_SESSION['login'])) :?>
-                    <div><a href="authorization.php?autho=Authorizaton">+Upload</a></div>
+                    <div><a href="authorization.php?autho=Authorizaton">+Загрузить</a></div>
                 <?php else : ?>
-                    <div><a href="uploadPage.php">+Upload</a></div>
+                    <div><a href="uploadPage.php">+Загрузить</a></div>
                 <?php endif ?>
                 <?php if(!isset($_SESSION['login'])) :?>
                     <div class="ImageSI"><img src="images/logo/Sign in.png" alt="Картинка авторизации"></div>
                     <div class="Signin">
-                        <span class="autho">+Sign in</span>    
+                        <span class="autho">+Вход</span>    
                         <div class="Authorization">
                             <div class="choiceUserAutho">
-                                <a class="Autho" href="authorization.php?autho=Authorizaton">Sign in</a>
-                                <a class="Registr" href="authorization.php?autho=Registration">Registration</a>
+                                <a class="Autho" href="authorization.php?autho=Authorizaton">Вход</a>
+                                <a class="Registr" href="authorization.php?autho=Registration">Регистрации</a>
                             </div>
                         </div>
                     </div>
@@ -99,10 +99,10 @@
                         <div class="SetMenu">
                             <div class="choiceUserMenu">
                                 <div class="buttonAccount">
-                                    <a href="account.php">Account</a>
+                                    <a href="account.php">Аккаунт</a>
                                 </div>
                                 <div class="buttonLeaveAccount">
-                                    <span class="leaveAccount">Sign out</span>
+                                    <span class="leaveAccount">Выход</span>
                                 </div>
                             </div>
                         </div>
@@ -112,9 +112,9 @@
         </div>
         <div class="Filters">
             <ul class="Filters Cells">
-                <li>Date<span class="ChangePlus">+</span></li>
-                <li>Extension<span class="ChangePlus">+</span></li>
-                <li>Cost<span class="ChangePlus">+</span></li>
+                <li>Дата<span class="ChangePlus">+</span></li>
+                <li>Расширения<span class="ChangePlus">+</span></li>
+                <li>Популярность<span class="ChangePlus">+</span></li>
             </ul>
         </div>
     </header>
@@ -155,7 +155,7 @@
         </div>
         <?php else :?>
         <div class="notFound">
-            <span class="textNotFound"><?php echo $searchRequest; ?> not found</span>
+            <span class="textNotFound"><?php echo $searchRequest; ?> не найдено</span>
         </div>
         <?php endif ?>
     </content>
@@ -163,20 +163,23 @@
         <?php if(count($rows) != 0) : ?>
         <div class="NumberPages">
             <?php for($i = 0; $i < $pages; $i++) : ?>
-                <a href="index.php?<?php 
-                if(isset($_GET['search'])){
-                    $tempID = $i+1;
-                    $tempID = (String)$tempID;
-                    echo "id=".$tempID."&search=$searchRequest";
-                }
-                else{
-                    $tempID = $i+1;
-                    $tempID = (String)$tempID;
-                    echo "id=".$tempID;
-                }
-                ?>">
-                    <?php echo $i+1; ?>
-                </a>
+                    <a href="index.php?<?php 
+                    if(isset($_GET['search'])){
+                        $tempID = $i+1;
+                        $tempID = (String)$tempID;
+                        echo "id=".$tempID."&search=$searchRequest";
+                    }
+                    else{
+                        
+                        $tempID = $i+1;
+                        $tempID = (String)$tempID;
+                        echo "id=".$tempID;
+                    }
+                    ?>">
+                    <div class="cellNumberPages">
+                        <?php echo $i+1; ?>
+                    </div>
+                    </a>
             <?php endfor ?>
         </div>
         <?php else : ?>

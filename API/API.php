@@ -11,7 +11,18 @@
     //Кодировка
     mysqli_query($linkBD, "SET NAMES 'utf8'");
 
+    // Подключение отправки по почте
+    require '../phpmailer/PHPMailer.php';
+    require '../phpmailer/SMTP.php';
+    require '../phpmailer/Exception.php';	
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    function getCode(){
+        $code = "";
+        for($i = 0; $i < 6; $i++) $code .= rand(0,9);
+        return $code;
+    }
 
     if($_POST['method'] == 'authorization'){
         $login = $_POST['login'];
@@ -36,10 +47,46 @@
 
         if($error == ""){
             if($rowSQL['passwordUser'] == $hash){
-                if(!isset($_SESSION['login'])){
-                    $_SESSION['login'] = $login;
-                    $_SESSION['password'] = $hash; // Да, а нужно что-то ещё?
-                }
+                // if(!isset($_SESSION['login'])){
+                //     $_SESSION['login'] = $login;
+                //     $_SESSION['password'] = $hash;
+                // }
+                $code = getCode();
+                $email = $rowSQL['email'];
+
+                $mail = new PHPMailer\PHPMailer\PHPMailer();
+                $mail->CharSet = 'UTF-8';
+                
+                // Настройки SMTP
+                $mail->isSMTP();
+                $mail->SMTPAuth = true;
+                $mail->SMTPDebug = 0;
+                
+                $mail->Host = 'ssl://smtp.gmail.com';
+                $mail->Port = 465;
+                $mail->Username = 'chance20022@gmail.com';
+                $mail->Password = 'gymocnayknhjeibz';
+                
+                // От кого
+                $mail->setFrom('chance20022@gmail.com');	
+                $code = getCode();
+
+                // Кому
+                $mail->addAddress("$email");
+                
+                // Тема письма
+                $mail->Subject = $subject;
+                
+                // Тело письма
+                $body = "<h3>Доброго времени суток. Это письмо пришло, потому что была совершена попытка входа на ваш аккаунт. Ваш код для входа - $code</h3>";
+                $mail->msgHTML($body);
+                
+                $mail->send();
+
+                // Запись кода в специальную базу данных
+                $sql = "INSERT INTO tempcodeemail (id, email, code) VALUES (NULL, '$email', '$code');";
+                mysqli_query($linkBD, $sql);
+
                 $arr = ['autho'=>true, 'result'=>"All ok"];
                 $json = json_encode($arr);
                 echo $json;
@@ -52,6 +99,35 @@
         }
         else{
             $arr = ['autho'=>false, 'result'=>"$error"];
+            $json = json_encode($arr);
+            echo $json;
+        }
+    }
+
+    if($_POST['method'] == 'regCode'){
+        $code = $_POST['code'];
+        $email = $_POST['email'];
+
+        $sqlS = "SELECT * FROM authouser WHERE email = '$email' OR loginUser = '$email'";
+        $resultS = mysqli_query($linkBD, $sqlS);
+        $rowS = mysqli_fetch_array($resultS);
+
+        $email = $rowS['email'];
+
+        $sql = "SELECT * FROM tempcodeemail WHERE email = '$email' ORDER BY id DESC";
+        $result = mysqli_query($linkBD, $sql);
+        $row = mysqli_fetch_array($result);
+
+        if($row['code'] == $code){
+            $_SESSION['login'] = $rowS['loginUser'];
+            $_SESSION['password'] = $rowS['passwordUser'];
+
+            $arr = ['access' => true];
+            $json = json_encode($arr);
+            echo $json;
+        }
+        else{
+            $arr = ['access' => false, 'codeSQL' => $row['code'], 'code' => $code];
             $json = json_encode($arr);
             echo $json;
         }
@@ -89,8 +165,11 @@
 
         if($error == ""){
             $sql = "INSERT INTO authouser (id, email, loginUser, passwordUser) VALUES (NULL, '$email', '$login', '$hash');";
-
             $result = mysqli_query($linkBD, $sql);
+
+            $sql = "SELECT * FROM authouser WHERE loginUser = '$login'";
+            $result = mysqli_query($linkBD, $sql);
+            $row = mysqli_fetch_array($result);
 
             if ($result == false) {
                 $arr = ['reg'=>false, 'result'=>'Error while trying to write to the database'];
@@ -98,6 +177,39 @@
                 echo $json;
             }
             else{
+                $mail = new PHPMailer\PHPMailer\PHPMailer();
+                $mail->CharSet = 'UTF-8';
+                
+                // Настройки SMTP
+                $mail->isSMTP();
+                $mail->SMTPAuth = true;
+                $mail->SMTPDebug = 0;
+                
+                $mail->Host = 'ssl://smtp.gmail.com';
+                $mail->Port = 465;
+                $mail->Username = 'chance20022@gmail.com';
+                $mail->Password = 'gymocnayknhjeibz';
+                
+                // От кого
+                $mail->setFrom('chance20022@gmail.com');	
+                $code = getCode();
+
+                // Кому
+                $mail->addAddress("$email");
+                
+                // Тема письма
+                $mail->Subject = $subject;
+                
+                // Тело письма
+                $body = "<h3>Доброго времени суток. Это письмо пришло, потому что данная почта была указана в указаннаом месте. Ваш код для регистрации - $code</h3>";
+                $mail->msgHTML($body);
+                
+                $mail->send();
+
+                // Запись кода в специальную базу данных
+                $sql = "INSERT INTO tempcodeemail (id, email, code) VALUES (NULL, '$email', '$code');";
+                mysqli_query($linkBD, $sql);
+
                 $arr = ['reg'=>true, 'result'=>'All good'];
                 $json = json_encode($arr);
                 echo $json;
@@ -174,7 +286,6 @@
         $masFiles = $_POST['masFiles']; // название файла во временном хранилище
 
         // Преобразование данных 
-
         $extensionIMG = convertingData($extensionIMG);
         $extensionFiles = convertingData($extensionFiles);
         $img = convertingData($img);
@@ -271,15 +382,106 @@
 
         //echo $login."<br>".$imgBD."<br>".$fileBD."<br>".$today."<br>".$mainText."<br>".$ExtensionFiles."<br>".$ExtensionIMG."<br>".$mainImg."<br>";
 
-        $sql = "INSERT INTO uploaddata (id, loginUser, pathImage, pathFile, timeUploading, DescriptionText, MainText, MainImg, ExtensionFiles, ExtensionIMG, Watched, Comments, Reviews, pay) VALUES (NULL, '$login', '$imgBD', '$newname.zip', '$today', '$textArea', '$mainText', '$mainImg', '$ExtensionFiles', '$ExtensionIMG', '0', '0', '0', '0');";
+        $sql = "INSERT INTO uploaddata (id, loginUser, pathImage, pathFile, timeUploading, DescriptionText, MainText, MainImg, ExtensionFiles, ExtensionIMG, Watched, Reviews, Comments, pay) VALUES (NULL, '$login', '$imgBD', '$newname.zip', '$today', '$textArea', '$mainText', '$mainImg', '$ExtensionFiles', '$ExtensionIMG', '0', '0', '0', '0');";
         $result = mysqli_query($linkBD, $sql);
         if(!$result){
             echo "Ошибка в записи в бд";
         }
+        // // Узнаю id из таблицы uploaddata для комментариев
+        // $sql = "SELECT id FROM uploaddata WHERE loginUser='$login' ORDER BY id DESC";
+        // $result = mysqli_query($linkBD, $sql);
+        // $row = mysqli_fetch_array($result);
+        // $idComment = $row['id'];
+
+        // $sql = "INSERT INTO commentsuser (id, idPage, comment, loginUser, Reviews) VALUE (NULL,'$idComment','0','$login','0')";
+        // $result = mysqli_query($linkBD, $sql);
 
         $arr = ['access'=>true];
         $json = json_encode($arr);
         echo $json;
+
     }
 
+    if($_POST['method'] == 'review'){
+        $Comments = $_POST['Comments'];
+        $id = $_POST['id'];
+        $Reviews = $_POST['Reviews'];
+        $login = $_POST['loginUser'];
+
+        // комментарии
+        $today = date("Y-m-d H:i:s");
+        $sql = "INSERT INTO commentsuser (id, idPage, comment, loginUser, Reviews, DateP) VALUES (NULL,'$id', '$Comments', '$login', '$Reviews', '$today');";
+        mysqli_query($linkBD, $sql);
+
+        // Обновление комментариев и оценки в uploaddata
+        $sql = "SELECT * FROM uploaddata WHERE id = $id";
+        $result = mysqli_query($linkBD, $sql);
+        $row = mysqli_fetch_array($result);
+
+        $ReviewsBD = $row['Reviews'];
+        if((int)$ReviewsBD != 0) $ReviewsBD = ((int)$ReviewsBD + (int)$Reviews)/2;
+        else $ReviewsBD = $Reviews;
+
+        $com = $row['Comments'];
+        (int)$com++;
+
+        $sql = "UPDATE uploaddata SET Reviews = '$ReviewsBD', Comments = '$com' WHERE id = $id";
+        mysqli_query($linkBD, $sql);
+
+        $arr = ['access' => true];
+        $json = json_encode($arr);
+        echo $json;
+    }
+
+    if($_POST['method'] == "deleteCom"){
+        $Comments = $_POST['Comments'];
+        $id = $_POST['id'];
+        $Reviews = $_POST['Reviews'];
+        $rev = $_POST['RevOld'];
+        $login = $_POST['loginUser'];
+
+        $sql = "DELETE FROM commentsuser WHERE loginUser = '$login'";
+        mysqli_query($linkBD, $sql);
+
+        $sql = "SELECT * FROM uploaddata WHERE id = $id";
+        $result = mysqli_query($linkBD, $sql);
+        $row = mysqli_fetch_array($result);
+
+        $answer = ((double)$rev * 2) - (double)$Reviews;
+
+        $com = $row['Comments'];
+        (int)$com--;
+
+        $sql = "UPDATE uploaddata SET Reviews = '$answer', Comments = '$com' WHERE id = $id";
+        mysqli_query($linkBD, $sql);
+
+        $arr = ['access' => true, 's' => $com];
+        $json = json_encode($arr);
+        echo $json;
+    }
+
+    if($_POST['method'] == 'editCom'){
+        $Comments = $_POST['Comments'];
+        $id = $_POST['id'];
+        $Reviews = $_POST['Reviews'];
+        $rev = $_POST['RevOld'];
+        $login = $_POST['loginUser'];
+
+        $sql = "UPDATE commentsuser SET comment = '$Comments', Reviews = '$Reviews' WHERE loginUser = '$login'";
+        mysqli_query($linkBD, $sql);
+
+        $sql = "SELECT * FROM uploaddata WHERE id = $id";
+        $result = mysqli_query($linkBD, $sql);
+        $row = mysqli_fetch_array($result);
+
+        $answer = ((double)$rev * 2) - (double)$Reviews;
+        $answer = ((double)$answer + (double)$Reviews)/2;
+
+        $sql = "UPDATE uploaddata SET Reviews = '$answer' WHERE id = $id";
+        mysqli_query($linkBD, $sql);
+
+        $arr = ['access' => true];
+        $json = json_encode($arr);
+        echo $json;
+    }
 ?>

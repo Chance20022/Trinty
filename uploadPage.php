@@ -327,13 +327,13 @@
                     $('.UploadButton').css('background-color',"#4c4cb3");
                 },
                 click: function(){
-                    iebalajax();
+                    pushDataInBD();
                 }
             });
             
         });
 
-        function iebalajax(){
+        function pushDataInBD(){
             var mainText = $('#mainText').val();
             var extensionFiles = [];
             var extensionIMG = [];
