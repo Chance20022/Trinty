@@ -159,6 +159,9 @@
                     if(data['autho'] == true){
                         $('.accessEmail').show();
                     }
+                    else if(data['ffsd'] == true){
+                        $(location).attr('href', 'rbwlnvlweviweowebwg.php');
+                    }
                     else{
                         alert(data['result']);
                     }

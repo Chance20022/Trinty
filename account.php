@@ -34,6 +34,10 @@
         }
         $countPublication++;
     }
+
+    $sql = "SELECT * FROM authouser WHERE loginUser = '$login'";
+    $result = mysqli_query($linkBD, $sql);
+    $dataUser = mysqli_fetch_array($result);
 ?>
 
 <!DOCTYPE html>
@@ -132,7 +136,8 @@
                 </div>
                 <?php if($checker) :?>
                 <?php else : ?>
-                <button class="buttonLichDan">Личные данные</button>
+                <button onclick="LichDan()" class="buttonLichDan">Личные данные</button>
+                <button onclick="BackLichDan()" class="buttonLichDanBack">Вернуться</button>
                 <?php endif ?>
             </div>
             <div class="publicationUserAcc">
@@ -181,6 +186,55 @@
                     </div>
                 </div>
             </div>
+            <?php if($checker) :?>
+                <?php else : ?>
+            <div class="LichDataAcc">
+            <div class="titleTextAcc">
+                <h1>Личные данные:</h1>
+            </div>
+            <div class="wrapper-c">
+                <div class='itemsData'>
+                    <div class="nicknameAcc">
+                        <div class="nickNameAccText">Ваш логин</div>
+                        <div class="nicknameAccInput"><input type="text" id="loginid" value="<?php echo $dataUser['loginUser']?>"></div>
+                        <div class='buttonChangeLoginUserDiv'>
+                            <button onclick="changeLogin()" class='buttonChangeLoginUser'>Изменить</button>
+                        </div>
+                    </div>
+                    <div class="nicknameAcc uppAcc">
+                        <div class="nickNameAccTextPass">Почта</div>
+                        <div class="nicknameAccInput">
+                            <div>
+                                <input id='emailid' type="text" value="<?php echo $dataUser['email']?>">
+                            </div>
+                            <div class="placeChangeEmail">
+                                <input id="code" type="text" placeholder="Введите код">
+                            </div>
+
+                        </div>
+                        <div class='buttonChangeLoginUserDiv'>
+                            <button onclick="changeCodeEmail()" class='buttonChangeLoginUser'>Изменить</button>
+                            <button onclick="changeEmail()" class='buttonChangeLoginUser uppButton'>Подтвердить</button>
+                        </div>
+                    </div>
+                    <div class="nicknameAcc uppAcc">
+                        <div class="nickNameAccTextPass">Сменить пароль</div>
+                        <div class="nicknameAccInput">
+                            <div>
+                                <input id="oldPass" type="password" placeholder="Старый пароль">
+                            </div>
+                            <div class="placeChangePassword">
+                                <input id="newPass" type="password" placeholder="Новый пароль">
+                            </div>
+                        </div>
+                        <div class='buttonChangeLoginUserDiv'>
+                            <button onclick="changePassword()" class='buttonChangeLoginUser'>Изменить</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <?php endif ?>
+        </div>
         </div>
     </content>
     <script>
@@ -206,10 +260,16 @@
                 $('.SetMenu').fadeOut(200);
             });
             $('.buttonLichDan').mouseenter(function(){
-                $('.buttonLichDan').css('background-color', '#7474fb');
+                $('.buttonLichDan').css('background-color', '#5a5acc');
             });
             $('.buttonLichDan').mouseleave(function(){
                 $('.buttonLichDan').css('background-color', '#4c4cb3');
+            });
+            $('.buttonChangeLoginUser').mouseenter(function(){
+                $(this).css("background-color","#5a5acc");
+            });
+            $('.buttonChangeLoginUser').mouseleave(function(){
+                $(this).css("background-color","#4c4cb3");
             });
 
             //Выход из аккаунта
@@ -236,6 +296,8 @@
             $('#toTop').click(function() {$('body,html').animate({scrollTop:0},800);});
         });
     </script>
+    <?php if($checker) :?>
+    <?php else : ?>
     <script>
         function deletePub(id){
             $.ajax({
@@ -254,6 +316,100 @@
         function editPub(id){
             $(location).attr('href', "edit.php?id="+id);
         }
+
+        $('.buttonLichDanBack').hide();
+        $('.LichDataAcc').hide();
+        function LichDan(){
+            $('.buttonLichDan').hide();
+            $('.publicationUserAcc').hide();
+            $('.LichDataAcc').show();
+            $('.buttonLichDanBack').show();
+        }
+
+        function BackLichDan(){
+            $('.LichDataAcc').hide();
+            $('.buttonLichDanBack').hide();
+            $('.buttonLichDan').show();
+            $('.publicationUserAcc').show();
+        }
+
+        function changeLogin(){
+            var login = $('#loginid').val();
+            if(login != '<?php echo $dataUser['loginUser'];?>'){
+                $.ajax({
+                    url: '/api/API.php',
+                    method: 'post',
+                    dataType: 'json',
+                    data: {method: 'changeLoginAcc', newLogin: login, oldLogin: "<?php echo $_SESSION['login']?>", email:"<?php echo $dataUser['email'];?>"},
+                    success: function(data){
+                        $(location).attr('href', 'account.php');
+                    }
+                });
+            }
+            else alert("Вы не указали новый логин");
+        }
+
+        $('.placeChangeEmail').hide();
+        $('.buttonChangeLoginUser.uppButton').hide();
+        function changeCodeEmail(){
+            var email = $('#emailid').val();
+
+            if(email != '<?php echo $dataUser['email'];?>'){
+                $('.placeChangeEmail').show();
+                $('.buttonChangeLoginUser.uppButton').show();
+                alert("Вам на старую почту выслан код подтвержения. Проверьте ещё раз правильность написания новой почты");
+                $.ajax({
+                    url: '/api/API.php',
+                    method: 'post',
+                    dataType: 'json',
+                    data: {method: 'codeEmailChange', email:"<?php echo $dataUser['email'];?>", newEmail: email},
+                    success: function(data){
+                        
+                    }
+                });
+            }
+            else alert("Вы не указали новый логин");
+        }
+
+        function changeEmail(){
+            var email = $('#emailid').val();
+            var code = $('#code').val();
+            $.ajax({
+                url: '/api/API.php',
+                method: 'post',
+                dataType: 'json',
+                data: {method: 'emailChange', email: email, code: code, login: "<?php echo $_SESSION['login'];?>", oldEmail: "<?php echo $dataUser['email']; ?>"},
+                success: function(data){
+                    if(data['access'] == true){
+                        $(location).attr('href', 'account.php');
+                    }
+                    else{
+                        alert(data['error']);
+                    }
+                }
+            });
+        }
+
+        function changePassword(){
+            var oldPass = $('#oldPass').val();
+            var newPass = $('#newPass').val();
+            
+            $.ajax({
+                url: '/api/API.php',
+                method: 'post',
+                dataType: 'json',
+                data: {method: 'emailChange', email: email, code: code, login: "<?php echo $_SESSION['login'];?>", oldEmail: "<?php echo $dataUser['email']; ?>"},
+                success: function(data){
+                    if(data['access'] == true){
+                        $(location).attr('href', 'account.php');
+                    }
+                    else{
+                        alert(data['error']);
+                    }
+                }
+            });
+        }
     </script>
+    <?php endif ?>
 </body>
 </html>

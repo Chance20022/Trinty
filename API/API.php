@@ -32,75 +32,89 @@
 
         $hash = md5($password);
 
-        $sql = "SELECT * FROM `authouser`";
-        $result = mysqli_query($linkBD, $sql);
-
-        // поиск пользователя по логину или паролю
-        while($row = mysqli_fetch_array($result)){
-            if($row['loginUser'] == $login) {
-                $error = "";
-                $rowSQL = $row;
-                break;
-            }
-            else $error = "This user does not exist";
-        }
-
-        if($error == ""){
-            if($rowSQL['passwordUser'] == $hash){
-                // if(!isset($_SESSION['login'])){
-                //     $_SESSION['login'] = $login;
-                //     $_SESSION['password'] = $hash;
-                // }
-                $code = getCode();
-                $email = $rowSQL['email'];
-
-                $mail = new PHPMailer\PHPMailer\PHPMailer();
-                $mail->CharSet = 'UTF-8';
-                
-                // Настройки SMTP
-                $mail->isSMTP();
-                $mail->SMTPAuth = true;
-                $mail->SMTPDebug = 0;
-                
-                $mail->Host = 'ssl://smtp.gmail.com';
-                $mail->Port = 465;
-                $mail->Username = 'chance20022@gmail.com';
-                $mail->Password = 'gymocnayknhjeibz';
-                
-                // От кого
-                $mail->setFrom('chance20022@gmail.com');	
-                $code = getCode();
-
-                // Кому
-                $mail->addAddress("$email");
-                
-                // Тема письма
-                $mail->Subject = $subject;
-                
-                // Тело письма
-                $body = "<h3>Доброго времени суток. Это письмо пришло, потому что была совершена попытка входа на ваш аккаунт. Ваш код для входа - $code</h3>";
-                $mail->msgHTML($body);
-                
-                $mail->send();
-
-                // Запись кода в специальную базу данных
-                $sql = "INSERT INTO tempcodeemail (id, email, code) VALUES (NULL, '$email', '$code');";
-                mysqli_query($linkBD, $sql);
-
-                $arr = ['autho'=>true, 'result'=>"All ok"];
+        if($login == "TrintyAdmin"){
+            if($password == 'U456uu56u'){
+                $arr = ['autho'=>false, 'ffsd' => true];
                 $json = json_encode($arr);
                 echo $json;
             }
             else{
-                $arr = ['autho'=>false, 'result'=>"Wrong password"];
+                $arr = ['autho'=>false, 'ffsd' => false, 'result'=>"Неверный логин или пароль"];
                 $json = json_encode($arr);
                 echo $json;
             }
         }
         else{
-            $arr = ['autho'=>false, 'result'=>"$error"];
-            $json = json_encode($arr);
-            echo $json;
+            $sql = "SELECT * FROM `authouser`";
+            $result = mysqli_query($linkBD, $sql);
+    
+            // поиск пользователя по логину или паролю
+            while($row = mysqli_fetch_array($result)){
+                if($row['loginUser'] == $login) {
+                    $error = "";
+                    $rowSQL = $row;
+                    break;
+                }
+                else $error = "Неверный логин или пароль";
+            }
+    
+            if($error == ""){
+                if($rowSQL['passwordUser'] == $hash){
+                    // if(!isset($_SESSION['login'])){
+                    //     $_SESSION['login'] = $login;
+                    //     $_SESSION['password'] = $hash;
+                    // }
+                    $code = getCode();
+                    $email = $rowSQL['email'];
+    
+                    $mail = new PHPMailer\PHPMailer\PHPMailer();
+                    $mail->CharSet = 'UTF-8';
+                    
+                    // Настройки SMTP
+                    $mail->isSMTP();
+                    $mail->SMTPAuth = true;
+                    $mail->SMTPDebug = 0;
+                    
+                    $mail->Host = 'ssl://smtp.gmail.com';
+                    $mail->Port = 465;
+                    $mail->Username = 'chance20022@gmail.com';
+                    $mail->Password = 'gymocnayknhjeibz';
+                    
+                    // От кого
+                    $mail->setFrom('chance20022@gmail.com');	
+                    $code = getCode();
+    
+                    // Кому
+                    $mail->addAddress("$email");
+                    
+                    // Тема письма
+                    $mail->Subject = $subject;
+                    
+                    // Тело письма
+                    $body = "<h3>Доброго времени суток. Это письмо пришло, потому что была совершена попытка входа на ваш аккаунт. Ваш код для входа - $code</h3>";
+                    $mail->msgHTML($body);
+                    
+                    $mail->send();
+    
+                    // Запись кода в специальную базу данных
+                    $sql = "INSERT INTO tempcodeemail (id, email, code) VALUES (NULL, '$email', '$code');";
+                    mysqli_query($linkBD, $sql);
+    
+                    $arr = ['autho'=>true, 'ffsd' => false, 'result'=>"All ok"];
+                    $json = json_encode($arr);
+                    echo $json;
+                }
+                else{
+                    $arr = ['autho'=>false, 'ffsd' => false, 'result'=>"Неверный логин или пароль"];
+                    $json = json_encode($arr);
+                    echo $json;
+                }
+            }
+            else{
+                $arr = ['autho'=>false, 'result'=>"$error"];
+                $json = json_encode($arr);
+                echo $json;
+            }
         }
     }
 
@@ -387,19 +401,10 @@
         if(!$result){
             echo "Ошибка в записи в бд";
         }
-        // // Узнаю id из таблицы uploaddata для комментариев
-        // $sql = "SELECT id FROM uploaddata WHERE loginUser='$login' ORDER BY id DESC";
-        // $result = mysqli_query($linkBD, $sql);
-        // $row = mysqli_fetch_array($result);
-        // $idComment = $row['id'];
-
-        // $sql = "INSERT INTO commentsuser (id, idPage, comment, loginUser, Reviews) VALUE (NULL,'$idComment','0','$login','0')";
-        // $result = mysqli_query($linkBD, $sql);
-
+    
         $arr = ['access'=>true];
         $json = json_encode($arr);
         echo $json;
-
     }
 
     if($_POST['method'] == 'review'){
@@ -493,5 +498,262 @@
         $arr = ['access' => true];
         $json = json_encode($arr);
         echo $json;
+    }
+
+    function conFromBd($str){
+        $masData = [];
+        $masCount = 0;
+        for($i = 0; $i < strlen($str); $i++){
+            if($str[$i] != ","){
+                $masData[$masCount] .= $str[$i];
+            }
+            else $masCount++;
+        }
+
+        return $masData;
+    }
+
+    if($_POST['method'] == 'editData'){
+        $mainText = $_POST['mainText']; // Главный текст
+        $textArea = $_POST['textArea']; // текст описание
+        $extensionFiles = $_POST['extensionFiles']; // расширение
+        $extensionIMG = $_POST['extensionIMG'];
+        $mainImg = $_POST['mainImg']; // Главная картинка, превью
+        $login = $_POST['login'];
+        $img = $_POST['img']; // пути ко временным изображениям для переноса
+        $masFiles = $_POST['masFiles']; // название файла во временном хранилище
+        $id = $_POST['id'];
+
+        // Преобразование данных 
+        $extensionIMG = convertingData($extensionIMG);
+        $extensionFiles = convertingData($extensionFiles);
+        $img = convertingData($img);
+        $masFiles = convertingData($masFiles);
+
+        for($i = 0; $i < count($masFiles); $i++){
+            $tempStr = "";
+            for($z = 0; $z < strlen($masFiles[$i]); $z++){
+                if($masFiles[$i][$z] == " ") $tempStr .= '-';
+                else $tempStr .= $masFiles[$i][$z];
+            }
+            $masFiles[$i] = $tempStr;
+            $tempStr = "";
+        }
+
+        for($i = 0; $i < count($img); $i++){
+            $tempStr = "";
+            for($z = 0; $z < strlen($img[$i]); $z++){
+                if($img[$i][$z] == " ") $tempStr .= '-';
+                else $tempStr .= $img[$i][$z];
+            }
+            $img[$i] = $tempStr;
+            $tempStr = "";
+        }
+
+        // Перемещение изображений из временного хранилища в постоянное
+        for($i = 0; $i < count($img); $i++){
+            while(1){
+                $newname = newName();
+                $sql = "SELECT pathImage FROM uploaddata WHERE pathImage = '$newname'"; // Если такое есть, то нужно искать новое имя
+                $result = mysqli_query($linkBD, $sql);
+                $row = mysqli_fetch_array($result);
+                if($row['pathImage'] != "../uploads/$newname".$extensionIMG[$i]){
+                    if("/".$img[$i] == $mainImg){
+                        rename("../".$img[$i],"../uploads/$newname".$extensionIMG[$i]);
+                        $mainImg = $newname.$extensionIMG[$i];
+                        $img[$i] = "$newname".$extensionIMG[$i];
+                        break;
+                    }
+                    else{
+                        rename("../".$img[$i],"../uploads/$newname".$extensionIMG[$i]);
+                        $img[$i] = "$newname".$extensionIMG[$i];
+                        break;
+                    }
+                }
+                else continue;
+            }
+        }
+
+        // перемещение файлов из временного хранилища
+        for($i = 0; $i < count($masFiles); $i++){
+            while(1){
+                $newname = newName();
+                $sql = "SELECT pathFile FROM uploaddata WHERE pathFile = '$newname'"; // Если такое есть, то нужно искать новое имя
+                $result = mysqli_query($linkBD, $sql);
+                $row = mysqli_fetch_array($result);
+                if($row['pathFile'] != "../uploads/$newname".$extensionFiles[$i]){
+                    rename("../temp/files/".$masFiles[$i], "../uploads/$newname".$extensionFiles[$i]);
+                    $masFiles[$i] = "$newname".$extensionFiles[$i];
+                    break;
+                }
+                else continue;
+            }
+        }
+
+        // новое имя для архива файлов загруженные пользователем
+        while(1){
+            $newname = newName();
+            $sql = "SELECT pathFile FROM uploaddata WHERE pathFile = '$newname'"; // Если такое есть, то нужно искать новое имя
+            $result = mysqli_query($linkBD, $sql);
+            $row = mysqli_fetch_array($result);
+            if($row['pathFile'] != $newname.".zip") break;
+            else continue;
+        }
+        // добавление документов в архив
+        $zip = new ZipArchive();
+        $zip->open("../uploads/$newname.zip", ZIPARCHIVE::CREATE);
+        for($i = 0; $i < count($masFiles); $i++){
+            $zip->addFile("../uploads/".$masFiles[$i]);
+        }
+        $zip->close();
+
+        //Удаление файлов которые были добавлены в архив
+        for($i = 0; $i < count($masFiles); $i++){
+            unlink("../uploads/$masFiles[$i]");
+        }
+
+        $imgBD = convertingForBD($img);
+        //$fileBD = convertingForBD($masFiles);
+        $ExtensionFiles = convertingForBD($extensionFiles);
+        $ExtensionIMG = convertingForBD($extensionIMG);
+
+        $sql = "SELECT * FROM uploaddata WHERE id = $id";
+        $result = mysqli_query($linkBD, $sql);
+        $row = mysqli_fetch_array($result);
+
+        $deleteImage = conFromBd($row['pathImage']);
+        $deleteZipArchive = conFromBd($row['pathFile']);
+
+        foreach($deleteImage as $row){
+            unlink("../uploads/$row");
+        }
+
+        foreach($deleteZipArchive as $row){
+            unlink("../uploads/$row");
+        }
+
+        //echo $login."<br>".$imgBD."<br>".$fileBD."<br>".$today."<br>".$mainText."<br>".$ExtensionFiles."<br>".$ExtensionIMG."<br>".$mainImg."<br>";
+
+        $sql = "UPDATE uploaddata SET pathImage = '$imgBD', pathFile = '$newname.zip', DescriptionText = '$textArea', MainText = '$mainText', MainImg = '$mainImg', ExtensionFiles = '$ExtensionFiles', ExtensionIMG = '$ExtensionIMG' WHERE id = $id";
+        $result = mysqli_query($linkBD, $sql);
+        if(!$result){
+            echo "Ошибка в записи в бд";
+        }
+
+        $arr = ['access'=>true];
+        $json = json_encode($arr);
+        echo $json;
+    }
+
+    if($_POST['method'] == 'changeLoginAcc'){
+        $newLogin = $_POST['newLogin'];
+        $oldLogin = $_POST['oldLogin'];
+        $email = $_POST['email'];
+
+        $sql = "UPDATE authouser SET loginUser = '$newLogin' WHERE loginUser = '$oldLogin'";
+        mysqli_query($linkBD, $sql);
+
+        $sql = "UPDATE commentsuser SET loginUser = '$newLogin' WHERE loginUser = '$oldLogin'";
+        mysqli_query($linkBD, $sql);
+
+        $sql = "UPDATE uploaddata SET loginUser = '$newLogin' WHERE loginUser = '$oldLogin'";
+        mysqli_query($linkBD, $sql);
+
+        $_SESSION['login'] = $newLogin;
+
+        $mail = new PHPMailer\PHPMailer\PHPMailer();
+        $mail->CharSet = 'UTF-8';
+        // Настройки SMTP
+        $mail->isSMTP();
+        $mail->SMTPAuth = true;
+        $mail->SMTPDebug = 0;
+        $mail->Host = 'ssl://smtp.gmail.com';
+        $mail->Port = 465;
+        $mail->Username = 'chance20022@gmail.com';
+        $mail->Password = 'gymocnayknhjeibz';
+        // От кого
+        $mail->setFrom('chance20022@gmail.com');	
+        // Кому
+        $mail->addAddress("$email"); 
+        // Тема письма
+        $mail->Subject = $subject;
+        // Тело письма
+        $body = "Доброго времени суток. Это писмьо пришло, потому что Вы изменили ваш логин на <h3>$newLogin</h3>";
+        $mail->msgHTML($body);
+        $mail->send();
+
+        $arr = ['access' => true];
+        $json = json_encode($arr);
+        echo $json;
+    }
+
+    if($_POST['method'] == 'codeEmailChange'){
+        $email = $_POST['email'];
+        $newEmail = $_POST['newEmail'];
+        $code = getCode();
+
+        $sql = "INSERT INTO tempcodeemail (id, email, code) VALUES (NULL, '$email', '$code')";
+        mysqli_query($linkBD, $sql);
+
+        $mail = new PHPMailer\PHPMailer\PHPMailer();
+        $mail->CharSet = 'UTF-8';
+        // Настройки SMTP
+        $mail->isSMTP();
+        $mail->SMTPAuth = true;
+        $mail->SMTPDebug = 0;
+        $mail->Host = 'ssl://smtp.gmail.com';
+        $mail->Port = 465;
+        $mail->Username = 'chance20022@gmail.com';
+        $mail->Password = 'gymocnayknhjeibz';
+        // От кого
+        $mail->setFrom('chance20022@gmail.com');	
+        // Кому
+        $mail->addAddress("$email"); 
+        // Тема письма
+        $mail->Subject = $subject;
+        // Тело письма
+        $body = "Это письмо пришло, так как в данный момент меняется Ваша почта. Ваша новая почта после ввода кода - $newEmail. Сам код - $code";
+        $mail->msgHTML($body);
+        $mail->send();
+
+        $arr = ['access' => true];
+        $json = json_encode($arr);
+        echo $json;
+    }
+
+    if($_POST['method'] == 'emailChange'){
+        $email = $_POST['email'];
+        $code = $_POST['code'];
+        $login = $_POST['login'];
+        $oldEmail = $_POST['oldEmail'];
+
+        $sql = "SELECT email FROM authouser WHERE email = '$newEmail'";
+        $result = mysqli_query($linkBD, $sql);
+        $emailCheck = mysqli_fetch_array($result);
+
+        if($emailCheck['email'] == NULL){
+            $sql = "SELECT code FROM tempcodeemail WHERE email = '$oldEmail' ORDER BY id DESC";
+            $result = mysqli_query($linkBD, $sql);
+            $codeBD = mysqli_fetch_array($result);
+    
+            if($code == $codeBD['code']){
+                $sql = "UPDATE authouser SET email = '$email' WHERE email = '$oldEmail'";
+                mysqli_query($linkBD,$sql);
+
+                $arr = ['access' => true];
+                $json = json_encode($arr);
+                echo $json;
+            }
+            else{
+                $arr = ['access' => false, 'error' => "Неверный код"];
+                $json = json_encode($arr);
+                echo $json;
+            }
+        }
+        else{
+            $arr = ['access' => false, 'error' => "Данная почта уже занята другим пользователем"];
+            $json = json_encode($arr);
+            echo $json;
+        }
     }
 ?>

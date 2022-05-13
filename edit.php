@@ -1,5 +1,23 @@
 <?php 
     session_start();
+
+    //Подключение к БД
+    $linkBD = mysqli_connect("localhost", "root", "root", "userdata");
+
+    if ($linkBD == false){
+        print("Ошибка: Невозможно подключиться к MySQL " . mysqli_connect_error());
+    }
+
+    //Кодировка
+    mysqli_query($linkBD, "SET NAMES 'utf8'");
+
+    $id = $_GET['id'];
+    $sql = "SELECT * FROM uploaddata WHERE id = '$id'";
+    $result = mysqli_query($linkBD, $sql);
+    $row = mysqli_fetch_array($result);
+
+    $access = true;
+    if($_SESSION['login'] != $row['loginUser']) $access = false;
 ?>
 
 <!DOCTYPE html>
@@ -30,9 +48,10 @@
         </div>
     </header>
     <content>
+        <?php if($access) :?>
         <div class="wrapper-1">
             <div class='UserNameUpload'>
-                <span class="UserNameTextUoload"> <?php echo $_SESSION['login']; ?></span>
+                <span class="UserNameTextUoload">Редактирование (заполните всё заново сохраняя старую статистику):</span>
             </div>
                 <div class='nameOfModel'>
                     <input type="text" name="mainText" id="mainText">
@@ -84,8 +103,11 @@
                     <span class="ShortDescriptionTitle">Описание (не обязательно)</span><br>
                     <textarea id="textArea" name="descriptionText" maxlength="1500" cols="30" rows="10" class="tired"></textarea>
                 </div>
-            <button class="UploadButton">Загрузить</button>
+            <button class="UploadButton">Редактировать</button>
         </div>
+        <?php else :?>
+            Вы не можете попасть на данную страницу
+        <?php endif ?>
     </content>
     <script>
         function loadingFiles(files){
@@ -421,7 +443,7 @@
                             $.ajax({
                                 type: "POST",
                                 url: '/api/API.php',
-                                data: {method: 'pushData', login: "<?php echo $_SESSION['login'] ?>", mainText: mainText, extensionIMG: ExtensionIMG, extensionFiles: ExtensionFiles, textArea: textArea, mainImg: mainImg, img: Img, masFiles: MasFiles},
+                                data: {method: 'editData', login: "<?php echo $_SESSION['login'] ?>", mainText: mainText, extensionIMG: ExtensionIMG, extensionFiles: ExtensionFiles, textArea: textArea, mainImg: mainImg, img: Img, masFiles: MasFiles, id: "<?php echo $row['id'];?>"},
                                 dataType : 'json',
                                 success: function(data){
                                     if(data['access'] == true){

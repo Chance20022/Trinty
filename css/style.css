@@ -228,7 +228,7 @@ a.Registr{
 }
 
 .wrapper-c{
-	width: 90%;
+	width: 87%;
 	margin: 0 auto;
 }
 
@@ -522,8 +522,6 @@ a.Registr{
     font-size: 14px;
 }
 
-
-
 /*///////////////////////////////////////////////*/
 
 .wrapperAcc{
@@ -708,6 +706,91 @@ a.Registr{
 
 .buttonLichDan{
 	cursor: pointer;
+}
+
+.buttonLichDanBack{
+    margin-top: 20px;
+    height: 40px;
+    width: 100%;
+    font-size: 16px;
+    color: white;
+    background-color: #4c4cb3;
+    border: 0px solid #4c4cb3;
+    border-radius: 4px;
+	cursor: pointer;
+}
+
+.LichDataAcc{
+	width: 80%;
+    display: block;
+    padding: 0px 20px;
+}
+
+.itemsData{
+	margin-top: 20px;
+	padding-bottom: 20px;
+}
+
+.nicknameAcc{
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+}
+
+.buttonChangeLoginUser{
+	width: 200px;
+	height: 34px;
+	background-color: #4c4cb3;
+	border: 0px solid;
+	border-radius: 4px;
+	color: white;
+	cursor: pointer;
+}
+
+.nickNameAccText{
+	margin: auto 0;
+	width: 33%;
+	text-align: center;
+}
+
+.nicknameAccInput{
+	width: 33%;
+	text-align: center;
+}
+
+.nicknameAccInput input{
+	height: 34px;
+	border: 1px solid #4c4cb3;
+	border-radius: 4px;
+	width: 70%;
+	text-align: center;
+}
+
+.buttonChangeLoginUserDiv{
+	text-align: center;
+	width: 33%;
+}
+
+.uppAcc{
+	margin-top: 20px;
+}
+
+.uppButton{
+	margin-top: 10px;
+}
+
+.nickNameAccTextPass{
+	width: 33%;
+    text-align: center;
+	margin-top: 7.5px;
+}
+
+.placeChangePassword{
+	margin-top: 10px;
+}
+
+.placeChangeEmail{
+	margin-top: 10px;
 }
 
 /*/////////////////////////////////////////////////*/
