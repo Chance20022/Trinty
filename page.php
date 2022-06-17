@@ -16,7 +16,7 @@
     $sql = "SELECT Watched FROM uploaddata WHERE id = $id";
     $result = mysqli_query($linkBD,$sql);
     $watch = mysqli_fetch_array($result);
-    $watch = (int)$watch['Watched'];
+    $watch = $watch['Watched'];
     $watch++;
     $sql = "UPDATE uploaddata SET Watched = $watch WHERE id = $id";
     mysqli_query($linkBD,$sql);
@@ -36,7 +36,6 @@
     $sql = "SELECT * FROM commentsuser WHERE loginUser = '$l' AND idPage = '$id'";
     $result = mysqli_query($linkBD, $sql);
     $rowCheck = mysqli_fetch_array($result);
-
     //$rows[$i]['pathImage'];
     //$rows[$i]['ExtensionFiles'];
     //$rows[$i]['ExtensionIMG'];
@@ -154,85 +153,91 @@
                 <div class="text">
                     <?php echo $row['DescriptionText'];?>
                 </div>
-                <?php if($rowCheck['loginUser'] == NULL) :?>
-                <div class="otzivi">
-                    <div class="titleO">
-                        <div>
-                            <span class="titleOtz">Отзывы <span class="titleOtzDiscr">Всего отзывов: <?php echo count($comRow); ?> (c/o: <?php echo $row['Reviews'];?>)</span></span>
-                            <div class="descripTitleOtz">Вы можете оставить свой комментарий:</div>
-                        </div>
-                        <div class="lineStars">
-                            <img class="stars" id="star1" src="images/logo/starNoActive.png" alt="Первая звезда оценки">
-                            <img class="stars" id="star2" src="images/logo/starNoActive.png" alt="Вторая звезда оценки">
-                            <img class="stars" id="star3" src="images/logo/starNoActive.png" alt="Третья звезда оценки">
-                            <img class="stars" id="star4" src="images/logo/starNoActive.png" alt="Четвёртая звезда оценки">
-                            <img class="stars" id="star5" src="images/logo/starNoActive.png" alt="Пятая звезда оценки">
-                        </div>
-                    </div>
-                    <textarea class="reviewsPlace" maxlength="4000" rows="10" placeholder="Помните о человеческом отношении друг к другу!"></textarea>
-                    <button onclick="pushReview()" class="pushReviws">Оставить отзыв</button>
+                <?php if($_SESSION['login'] == NULL ) :?>
+                <div class="otziviNoReg">
+                    Чтобы оставить отзыв вам необходимо авторизироваться
                 </div>
                 <?php else : ?>
-                    <div class="otzivi">
-                    <div class="titleO">
-                        <div>
-                            <span class="titleOtz">Отзывы <span class="titleOtzDiscr">Всего отзывов: <?php echo count($comRow); ?> (c/o: <?php echo $row['Reviews'];?>)</span></span>
-                            <div class="descripTitleOtz">Вы можете отредактировать свой комментарий:</div>
-                        </div>
-                        <?php switch($rowCheck['Reviews']) :
-                        case"1": ?>
+                    <?php if($rowCheck['loginUser'] == NULL) :?>
+                        <div class="otzivi">
+                        <div class="titleO">
+                            <div>
+                                <span class="titleOtz">Отзывы <span class="titleOtzDiscr">Всего отзывов: <?php echo count($comRow); ?> (c/o: <?php echo $row['Reviews'];?>)</span></span>
+                                <div class="descripTitleOtz">Вы можете оставить свой комментарий:</div>
+                            </div>
                             <div class="lineStars">
-                                <img class="stars" id="star1" src="images/logo/starActive.png" alt="Первая звезда оценки">
+                                <img class="stars" id="star1" src="images/logo/starNoActive.png" alt="Первая звезда оценки">
                                 <img class="stars" id="star2" src="images/logo/starNoActive.png" alt="Вторая звезда оценки">
                                 <img class="stars" id="star3" src="images/logo/starNoActive.png" alt="Третья звезда оценки">
                                 <img class="stars" id="star4" src="images/logo/starNoActive.png" alt="Четвёртая звезда оценки">
                                 <img class="stars" id="star5" src="images/logo/starNoActive.png" alt="Пятая звезда оценки">
                             </div>
-                            <?php break; ?>
-                            <?php case"2": ?>
-                            <div class="lineStars">
-                                <img class="stars" id="star1" src="images/logo/starActive.png" alt="Первая звезда оценки">
-                                <img class="stars" id="star2" src="images/logo/starActive.png" alt="Вторая звезда оценки">
-                                <img class="stars" id="star3" src="images/logo/starNoActive.png" alt="Третья звезда оценки">
-                                <img class="stars" id="star4" src="images/logo/starNoActive.png" alt="Четвёртая звезда оценки">
-                                <img class="stars" id="star5" src="images/logo/starNoActive.png" alt="Пятая звезда оценки">
-                            </div>
-                            <?php break; ?>
-                            <?php case"3": ?>
-                            <div class="lineStars">
-                                <img class="stars" id="star1" src="images/logo/starActive.png" alt="Первая звезда оценки">
-                                <img class="stars" id="star2" src="images/logo/starActive.png" alt="Вторая звезда оценки">
-                                <img class="stars" id="star3" src="images/logo/starActive.png" alt="Третья звезда оценки">
-                                <img class="stars" id="star4" src="images/logo/starNoActive.png" alt="Четвёртая звезда оценки">
-                                <img class="stars" id="star5" src="images/logo/starNoActive.png" alt="Пятая звезда оценки">
-                            </div>
-                            <?php break; ?>
-                            <?php case"4": ?>
-                            <div class="lineStars">
-                                <img class="stars" id="star1" src="images/logo/starActive.png" alt="Первая звезда оценки">
-                                <img class="stars" id="star2" src="images/logo/starActive.png" alt="Вторая звезда оценки">
-                                <img class="stars" id="star3" src="images/logo/starActive.png" alt="Третья звезда оценки">
-                                <img class="stars" id="star4" src="images/logo/starActive.png" alt="Четвёртая звезда оценки">
-                                <img class="stars" id="star5" src="images/logo/starNoActive.png" alt="Пятая звезда оценки">
-                            </div>
-                            <?php break; ?>
-                            <?php case"5": ?>
-                            <div class="lineStars">
-                                <img class="stars" id="star1" src="images/logo/starActive.png" alt="Первая звезда оценки">
-                                <img class="stars" id="star2" src="images/logo/starActive.png" alt="Вторая звезда оценки">
-                                <img class="stars" id="star3" src="images/logo/starActive.png" alt="Третья звезда оценки">
-                                <img class="stars" id="star4" src="images/logo/starActive.png" alt="Четвёртая звезда оценки">
-                                <img class="stars" id="star5" src="images/logo/starActive.png" alt="Пятая звезда оценки">
-                            </div>
-                            <?php break; ?>
-                        <?php endswitch; ?>
+                        </div>
+                        <textarea class="reviewsPlace" maxlength="4000" rows="10" placeholder="Помните о человеческом отношении друг к другу!"></textarea>
+                        <button onclick="pushReview()" class="pushReviws">Оставить отзыв</button>
                     </div>
-                    <textarea class="reviewsPlace" maxlength="4000" rows="10"><?php echo $rowCheck['comment'];?></textarea>
-                    <div class="choiceUserToRevie">
-                        <button onclick="deleteReview()" class="EditReviws">Удалить отзыв</button>
-                        <button onclick="editReview()" class="EditReviws">Редактировать отзыв</button>
+                    <?php else :?>
+                        <div class="otzivi">
+                        <div class="titleO">
+                            <div>
+                                <span class="titleOtz">Отзывы <span class="titleOtzDiscr">Всего отзывов: <?php echo count($comRow); ?> (c/o: <?php echo $row['Reviews'];?>)</span></span>
+                                <div class="descripTitleOtz">Вы можете отредактировать свой комментарий:</div>
+                            </div>
+                            <?php switch($rowCheck['Reviews']) :
+                            case"1": ?>
+                                <div class="lineStars">
+                                    <img class="stars" id="star1" src="images/logo/starActive.png" alt="Первая звезда оценки">
+                                    <img class="stars" id="star2" src="images/logo/starNoActive.png" alt="Вторая звезда оценки">
+                                    <img class="stars" id="star3" src="images/logo/starNoActive.png" alt="Третья звезда оценки">
+                                    <img class="stars" id="star4" src="images/logo/starNoActive.png" alt="Четвёртая звезда оценки">
+                                    <img class="stars" id="star5" src="images/logo/starNoActive.png" alt="Пятая звезда оценки">
+                                </div>
+                                <?php break; ?>
+                                <?php case"2": ?>
+                                <div class="lineStars">
+                                    <img class="stars" id="star1" src="images/logo/starActive.png" alt="Первая звезда оценки">
+                                    <img class="stars" id="star2" src="images/logo/starActive.png" alt="Вторая звезда оценки">
+                                    <img class="stars" id="star3" src="images/logo/starNoActive.png" alt="Третья звезда оценки">
+                                    <img class="stars" id="star4" src="images/logo/starNoActive.png" alt="Четвёртая звезда оценки">
+                                    <img class="stars" id="star5" src="images/logo/starNoActive.png" alt="Пятая звезда оценки">
+                                </div>
+                                <?php break; ?>
+                                <?php case"3": ?>
+                                <div class="lineStars">
+                                    <img class="stars" id="star1" src="images/logo/starActive.png" alt="Первая звезда оценки">
+                                    <img class="stars" id="star2" src="images/logo/starActive.png" alt="Вторая звезда оценки">
+                                    <img class="stars" id="star3" src="images/logo/starActive.png" alt="Третья звезда оценки">
+                                    <img class="stars" id="star4" src="images/logo/starNoActive.png" alt="Четвёртая звезда оценки">
+                                    <img class="stars" id="star5" src="images/logo/starNoActive.png" alt="Пятая звезда оценки">
+                                </div>
+                                <?php break; ?>
+                                <?php case"4": ?>
+                                <div class="lineStars">
+                                    <img class="stars" id="star1" src="images/logo/starActive.png" alt="Первая звезда оценки">
+                                    <img class="stars" id="star2" src="images/logo/starActive.png" alt="Вторая звезда оценки">
+                                    <img class="stars" id="star3" src="images/logo/starActive.png" alt="Третья звезда оценки">
+                                    <img class="stars" id="star4" src="images/logo/starActive.png" alt="Четвёртая звезда оценки">
+                                    <img class="stars" id="star5" src="images/logo/starNoActive.png" alt="Пятая звезда оценки">
+                                </div>
+                                <?php break; ?>
+                                <?php case"5": ?>
+                                <div class="lineStars">
+                                    <img class="stars" id="star1" src="images/logo/starActive.png" alt="Первая звезда оценки">
+                                    <img class="stars" id="star2" src="images/logo/starActive.png" alt="Вторая звезда оценки">
+                                    <img class="stars" id="star3" src="images/logo/starActive.png" alt="Третья звезда оценки">
+                                    <img class="stars" id="star4" src="images/logo/starActive.png" alt="Четвёртая звезда оценки">
+                                    <img class="stars" id="star5" src="images/logo/starActive.png" alt="Пятая звезда оценки">
+                                </div>
+                                <?php break; ?>
+                            <?php endswitch; ?>
+                        </div>
+                        <textarea class="reviewsPlace" maxlength="4000" rows="10"><?php echo $rowCheck['comment'];?></textarea>
+                        <div class="choiceUserToRevie">
+                            <button onclick="deleteReview()" class="EditReviws">Удалить отзыв</button>
+                            <button onclick="editReview()" class="EditReviws">Редактировать отзыв</button>
+                        </div>
                     </div>
-                </div>
+                    <?php endif ?>
                 <?php endif ?>
                 <?php if(count($comRow) == 0) :?>
                     <div class="emptyRev">

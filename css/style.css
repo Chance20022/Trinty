@@ -198,6 +198,7 @@ a.Registr{
 
 .ChangePlus{
 	color: #c68c00;
+	font-size: 18px;
 }
 
 .Filters.Cells{
@@ -293,6 +294,122 @@ a.Registr{
 
 .cellNumberPages a{
 	font-size: 18px;
+}
+
+.mainPos{
+	position: relative;
+}
+
+.filterChangerDate{
+	top: 50px;
+	width: 156px;
+	border: 1px solid #4c4cb3;
+	color: black;
+	border-radius: 4px ;
+	position: absolute;
+	background-color: white;
+	padding: 5px;
+	opacity: 0.7;
+}
+
+.filterChangerPop{
+	top: 50px;
+	width: 268px;
+	border: 1px solid #4c4cb3;
+	color: black;
+	border-radius: 4px ;
+	position: absolute;
+	background-color: white;
+	padding: 5px;
+	opacity: 0.7;
+}
+
+.filterChangerRashi{
+	display: block;
+	top: 50px;
+	width: 65px;
+	border: 1px solid #4c4cb3;
+	color: black;
+	border-radius: 4px ;
+	position: absolute;
+	background-color: white;
+	padding: 10px;
+	opacity: 1;
+}
+
+.filterChangerRashi input{
+	margin-right: 5px;
+}
+
+.acceptButtonFilters{
+	padding: 5px;
+	margin-top: 5px;
+	background-color: #4c4cb3;
+	color: white;
+	border: 0px;
+	font-size: 11px;
+}
+
+.reporting{
+	position: absolute;
+	right:25px;
+	top:102px;
+	color: black;
+	opacity: 0.3;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.reportDivPush{
+    width: 600px;
+    height: 475px;
+    background-color: #4c4cb3;
+
+	border-radius: 4px;
+	box-shadow: rgb(54, 54, 54) 0px 0px 100px;
+    
+    position: fixed;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    
+    margin: auto;
+	padding: 0 20px;
+}
+
+.korotko{
+	width: 97%;
+	height: 25px;
+	padding: 0 10px;
+	font-size: 16px;
+}
+
+.reportButton{
+	margin-top: 20px;
+	display: flex;
+	justify-content: space-around;
+}
+
+.reportButton button{
+	color:#4c4cb3;
+	background-color: white;
+	border: 0px;
+	border-radius: 4px;
+	padding: 10px;
+	font-size: 17px;
+}
+
+.textareaReportClass{
+	width: 97%;
+	font-size: 16px;
+	padding: 10px;
+}
+
+.textReporting{
+	color: white;
+	font-size: 24px;
+	margin: 20px 0;
 }
 
 /*/////////////////////////////////////////////////*/
@@ -1028,10 +1145,6 @@ a.Registr{
 	font-size: 42px;
 }
 
-.UserNamePage{
-
-}
-
 .UserNameTextPage{
 	font-size: 34px;
 	color: #4c4cb3;
@@ -1080,6 +1193,16 @@ a.Registr{
 	box-shadow: 0 0 10px rgba(0,0,0,0.2);
 	margin-top: 50px;
 	display: block;
+	width: 990px;
+}
+
+.otziviNoReg{
+	padding: 20px 30px;
+	border-radius: 4px;
+	box-shadow: 0 0 10px rgba(0,0,0,0.2);
+	margin-top: 50px;
+	display: flex;
+	justify-content: center;
 	width: 990px;
 }
 
@@ -1188,4 +1311,122 @@ a.Registr{
     background-color: #4c4cb3;
     border: 0px black;
 	border-radius: 4px;
+}
+
+/*///////////////////////////////////////////////////*/
+.TitleAdminPanel{
+	color:black;
+	font-size: 54px;
+	font-family: Arial;
+	margin-top: 20px;
+	padding: 0 20px;
+	padding-bottom: 20px;
+	border-bottom: 3px solid #4c4cb3;
+	display: flex;
+	justify-content: space-between;
+}
+
+.wrapper-admin{
+	width: 85%;
+	margin: 0 auto;
+}
+
+.buttonAbility{
+	display: flex;
+	justify-content: space-around;
+	margin-top: 20px;
+	padding-bottom: 20px;
+	border-bottom: 1px solid #4c4cb3;
+}
+
+.buttonAbility div{
+	width: 200px;
+	padding: 20px;
+	border-radius: 4px;
+	background-color: #4c4cb3;
+	color:white;
+	font-size: 24px;
+	font-family: Arial, Helvetica, sans-serif;
+	cursor: pointer;
+	text-align: center;
+}
+
+.searchAdmin{
+	margin-top: 20px;
+	display: flex;
+	justify-content: end;
+}
+
+.searchButtonAdmin{
+	height: 34px;
+	width: 86px;
+	padding: 0;
+	margin: 0;
+	font-size: 18px;
+	background-color: #4c4cb3;
+	border-radius: 4px;
+	color: white;
+	border:0;
+	cursor: pointer;
+}
+
+.inputSearchAdmin{
+	height: 34px;
+	width: 300px;
+	border: 1px solid #4c4cb3;
+	border-radius: 4px;
+	padding: 0 10px;
+	font-size: 18px;
+	margin-right: 10px;
+}
+
+.lineRowAdmin{
+	display: flex;
+	margin-top: 20px;
+}
+
+.lineRowAdmin div{
+	padding: 5px;
+}
+
+.lineRowAdmin img{
+	width: 20px;
+	height: 20px;
+	cursor: pointer;
+}
+
+.rowR1{
+	width: 5%;
+	font-size: 22px;
+	height: 100%;
+	word-wrap: break-word;
+}
+
+.rowR2{
+	width: 10%;
+	font-size: 22px;
+	height: 100%;
+	word-wrap: break-word;
+}
+
+.rowR3{
+	width: 20%;
+	font-size: 22px;
+	height: 100%;
+	word-wrap: break-word;
+}
+
+.rowR4{
+	width: 60%;
+	font-size: 22px;
+	height: 100%;
+	word-wrap: break-word;
+}
+
+.rowR5{
+	width: 5%;
+	font-size: 22px;
+	height: 100%;
+	word-wrap: break-word;
+	text-align: center;
 }

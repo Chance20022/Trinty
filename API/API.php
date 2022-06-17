@@ -34,6 +34,7 @@
 
         if($login == "TrintyAdmin"){
             if($password == 'U456uu56u'){
+                $_SESSION['srbwqabqeb'] = "wvhgl2nvlvnlirnl438hvnlsuhrivr";
                 $arr = ['autho'=>false, 'ffsd' => true];
                 $json = json_encode($arr);
                 echo $json;
@@ -755,5 +756,29 @@
             $json = json_encode($arr);
             echo $json;
         }
+    }
+
+    if($_POST['method'] == 'pushReport'){
+        $title = $_POST['title'];
+        $text = $_POST['text'];
+        $login = $_POST['login'];
+
+        $sql = "INSERT INTO report (id, loginUser, title, textR) VALUES (NULL, '$login', '$title', '$text')";
+        mysqli_query($linkBD, $sql);
+
+        $arr = ['access' => true];
+        $json = json_encode($arr);
+        echo $json;
+    }
+
+    if($_POST['method'] == 'deleteLine'){
+        $id = $_POST['id'];
+
+        $sql = "DELETE FROM report WHERE id = '$id'";
+        mysqli_query($linkBD, $sql);
+
+        $arr = ['access' => true];
+        $json = json_encode($arr);
+        echo $json;
     }
 ?>

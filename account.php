@@ -239,7 +239,21 @@
     </content>
     <script>
         $('.SetMenu').hide();
+        $('.Authorization').hide();
         $(document).ready(function(){
+            $(".autho").mouseenter(function(){
+                $('.Authorization').fadeIn(100);
+            });
+            $(".ImageSI").mouseenter(function(){
+                $('.Authorization').fadeIn(100);
+            });
+            $('.Authorization').mouseleave(function(){
+                $('.Authorization').fadeOut(200);
+            });
+            $('content').click(function(){
+                $('.Authorization').fadeOut(200);
+            });
+
             $('.CellAcc').mouseenter(function(){
                 $(this).css('box-shadow', '0 0 10px rgba(0,0,0,0.5)');
             });
